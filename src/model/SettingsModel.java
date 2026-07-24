@@ -1,5 +1,5 @@
 package model;
-// Recayi Giousoufoglou (Studen.ComCave.Duisburg)
+// Recayi Giousoufoglou (Student.ComCave.Duisburg)
 // Test number 2
 public class SettingsModel {
 
