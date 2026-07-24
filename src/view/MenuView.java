@@ -1,26 +1,32 @@
 // Christoph (Dozent)
 package view;
 
+import java.awt.BorderLayout;
+
 import javax.swing.*;
 
 public class MenuView extends JFrame {
 	// UI attributes
 	private JButton newGameBtn, loadGameBtn, settingsBtn, highScoreBtn, exitBtn;
 	private JLabel titleLbl;
-	private JPanel backGroundPnl;
+	private BackGroundPanel backGroundPnl;
 
 	// paths
-	private String backGroundPath = "/res/backgrounds/menu_bg.png";
+	private String backGroundPath = "/backgrounds/Red_Cape_Hero_Menu_BG.png";
 
 	public MenuView() {
 		// setUndecorated(true); // randlos
 		setTitle("Red Cape Hero - Hauptmenü");
-		setLocationRelativeTo(null); // zentriert
 		setAlwaysOnTop(true); // Fokus setzen
 		setExtendedState(JFrame.MAXIMIZED_BOTH); // Vollbild
 		
-		// TODO: fill window with UI elements! (for Monday, 27.07.26)
+		ImageIcon bgIcon = new ImageIcon(getClass().getResource(backGroundPath));
+		backGroundPnl = new BackGroundPanel(bgIcon.getImage());
+		backGroundPnl.setLayout(new BorderLayout());
 
+		// TODO: fill window with UI elements! (for Monday, 27.07.26)
+		getContentPane().add(backGroundPnl);
+		setLocationRelativeTo(null); // zentriert
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // X-funktioniert
 		setVisible(true); // sichtbar machen
 	}
