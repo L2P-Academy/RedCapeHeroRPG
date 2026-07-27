@@ -1,6 +1,6 @@
 package model;
 
-//Denis
+// Denis
 public class NPCModel {
 
 	// attributes
@@ -9,22 +9,25 @@ public class NPCModel {
 	private String dialog;
 	private int positionX;
 	private int positionY;
-	
+	private int strength;
+	private int endurance;
+	private int damage;
+
 	// constructor
-	public NPCModel(int id, String name, String dialog, int positionX, int positionY, String spritePath) {
+	public NPCModel(int id, String name, String dialog, int positionX, int positionY,
+			int strength, int endurance, int damage) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.dialog = dialog;
 		this.positionX = positionX;
 		this.positionY = positionY;
+		this.strength = strength;
+		this.endurance = endurance;
+		this.damage = damage;
 	}
 
-	public NPCModel(int id2, String name2, String dialog2, int positionX2, int positionY2, int i) {
-		// TODO Auto-generated constructor stub
-	}
-
-	//getter & setters
+	// getter & setter
 	public int getId() {
 		return id;
 	}
@@ -65,5 +68,28 @@ public class NPCModel {
 		this.positionY = positionY;
 	}
 
-	
+	public int getStrength() {
+		return strength;
+	}
+
+	public void setStrength(int strength) {
+		this.strength = strength;
+	}
+
+	public int getEndurance() {
+		return endurance;
+	}
+
+	public void setEndurance(int endurance) {
+		this.endurance = endurance;
+	}
+
+	public int getDamage() {
+		return damage;
+	}
+
+	public void setDamage(int damage) {
+		this.damage = damage;
+	}
+
 }
