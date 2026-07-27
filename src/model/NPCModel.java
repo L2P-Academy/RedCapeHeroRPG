@@ -9,22 +9,15 @@ public class NPCModel {
 	private String dialog;
 	private int positionX;
 	private int positionY;
-	private int strength;
-	private int endurance;
-	private int damage;
 
 	// constructor
-	public NPCModel(int id, String name, String dialog, int positionX, int positionY,
-			int strength, int endurance, int damage) {
+	public NPCModel(int id, String name, String dialog, int positionX, int positionY) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.dialog = dialog;
 		this.positionX = positionX;
 		this.positionY = positionY;
-		this.strength = strength;
-		this.endurance = endurance;
-		this.damage = damage;
 	}
 
 	// getter & setter
@@ -66,30 +59,6 @@ public class NPCModel {
 
 	public void setPositionY(int positionY) {
 		this.positionY = positionY;
-	}
-
-	public int getStrength() {
-		return strength;
-	}
-
-	public void setStrength(int strength) {
-		this.strength = strength;
-	}
-
-	public int getEndurance() {
-		return endurance;
-	}
-
-	public void setEndurance(int endurance) {
-		this.endurance = endurance;
-	}
-
-	public int getDamage() {
-		return damage;
-	}
-
-	public void setDamage(int damage) {
-		this.damage = damage;
 	}
 
 }
