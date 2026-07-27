@@ -4,16 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class QuestRepository {
-    // Hier werden die Quests im Speicher gehalten
-    private List<QuestModel> questList = new ArrayList<>();
 
-    // Alle Quests abrufen
-    public List<QuestModel> getAllQuests() {
-        return questList;
+    private static final List<QuestModel> QUEST_LIST = new ArrayList<>();
+
+    static {
+        QUEST_LIST.add(new QuestModel(0, "Startquest", "Der Schmied hat ein Schwert für dich angefertigt!", false));
+        QUEST_LIST.add(new QuestModel(1, "Nächste Quest...", "", false));
+        QUEST_LIST.add(new QuestModel(2, "Übernächste Quest...", "", false));
     }
 
-    // Neue Quest hinzufügen
+    public static List<QuestModel> getQuestList() {
+        return QUEST_LIST;
+    }
+
     public void addQuest(QuestModel quest) {
-        questList.add(quest);
+        QUEST_LIST.add(quest);
     }
 }
