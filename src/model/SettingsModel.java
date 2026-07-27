@@ -7,35 +7,26 @@ public class SettingsModel {
 	
 	//Constructor with parameters
 	public SettingsModel(int volume, int gamma, String resolution) {
-		setVolume(volume); // Use the validation method
+		this.volume = volume;
 		this.gamma = gamma;
 		this.resolution = resolution;
 	}
 	
-	// getter & setter volume
+	
+	// getter & Setter gamma
 	public int getVolume() {
 		return volume;	
 	}
-	
-	// Setter with Volume Validation (0-100)
 	public void setVolume(int volume) {
-		if (volume < 0) {
-			this.volume = 0; // Negative Volume Stop
-		} else if (volume > 100) {
-			this.volume = 100; // Too loud values are prevented
-		} else {
-			this.volume = volume; // Invalid value
-		}
 		this.volume = volume;
 	}
-	// getter & Setter gamma
 	public int getGamma() {
 		return gamma;
 	}
 	public void setGamma(int gamma) {
 		this.gamma = gamma;
 	}
-	// getter & Setter resolution
+	
 	public String getResolution() {
 		return resolution;
 	}
