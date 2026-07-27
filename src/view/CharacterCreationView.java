@@ -106,7 +106,7 @@ public class CharacterCreationView extends JFrame {
             }
         });
         
-        if (!ClassRepository.getClasslist().isEmpty()) { // Eine Klasse muss ausgewählt sein.
+        if (!ClassRepository.getClasslist().isEmpty()) {
             classList.setSelectedIndex(0);
         }
 
@@ -118,4 +118,3 @@ public class CharacterCreationView extends JFrame {
         
 		}
 	}
-}
