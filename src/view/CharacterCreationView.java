@@ -7,7 +7,6 @@ import javax.swing.JTextField;
 import javax.swing.JComboBox;
 import java.util.List;
 import model.ClassModel;
-import repository.ClassRepository;
 
 public class CharacterCreationView extends JDialog {
 	
@@ -26,8 +25,5 @@ public class CharacterCreationView extends JDialog {
 		JComboBox <ClassModel> classComboBox =
 				new JComboBox<>(classList.toArray(new ClassModel[0])); // Legt ein Array aus der Liste an und erstellt hoffentlich eine Auswahlbox
 		add (classComboBox);
-		ClassModel selectedClass =
-		        (ClassModel) classComboBox.getSelectedItem(); // Soll die Auswahl aus der Auswahlbox übernehmen
-		selectedClass.getName();
 	}
 }
