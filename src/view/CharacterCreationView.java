@@ -18,8 +18,8 @@ public class CharacterCreationView extends JDialog {
 		setLocationRelativeTo(null); //zentriert das Fenster relativ zum Hauptfenster
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE); //Damit das Fenster auch wieder zugeht
 		
-		JLabel nameLabel = new JLabel ("Charakter Name:");
-		JTextField nameField = new JTextField(20);
+		JLabel nameLabel = new JLabel ("Charakter Name:"); // Neues Feld Mit Charakter Name
+		JTextField nameField = new JTextField(20); // Namensfeld
 		add (nameLabel);
 		add (nameField);
 		List <ClassModel> classList = ClassRepository.getClasslist();
