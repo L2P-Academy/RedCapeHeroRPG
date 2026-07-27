@@ -22,6 +22,12 @@ public class CharacterCreationView extends JDialog {
 		JTextField nameField = new JTextField(20); // Namensfeld
 		add (nameLabel);
 		add (nameField);
-		List <ClassModel> classList = ClassRepository.getClasslist();
+		List <ClassModel> classList = ClassRepository.getClasslist(); // Holt sich die unsere Klassenliste
+		JComboBox <ClassModel> classComboBox =
+				new JComboBox<>(classList.toArray(new ClassModel[0])); // Legt ein Array aus der Liste an und erstellt hoffentlich eine Auswahlbox
+		add (classComboBox);
+		ClassModel selectedClass =
+		        (ClassModel) classComboBox.getSelectedItem(); // Soll die Auswahl aus der Auswahlbox übernehmen
+		selectedClass.getName();
 	}
 }
