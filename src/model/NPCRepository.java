@@ -11,13 +11,23 @@ public class NPCRepository {
 
 	static {
 
-		NPCLIST.add(new NPCModel(0,"Wache1Light","Hallo Fremder!",0,0,2,2,3));
+		// Innkeeper
+		NPCLIST.add(new NPCModel(0,"Wirt","Willkommen im Roten Umhang!",0,0));
 
-		NPCLIST.add(new NPCModel(1,"Wache2Middle","Hier darf niemand durch!",0,0,3,3,4));
+		// Healer
+		NPCLIST.add(new NPCModel(1,"Heilerin","Ich kann deine Wunden heilen.",0,0));
 
-		NPCLIST.add(new NPCModel(2,"Wache3Hard","Mach keinen Ärger!",0,0,4,4,5));
+		// Merchant
+		NPCLIST.add(new NPCModel(2,"Händler","Willst du etwas kaufen?",0,0));
 
-		NPCLIST.add(new NPCModel(3,"Wache4Ultra","Verschwinde sofort!",0,0,6,5,6));
+		// Villager
+		NPCLIST.add(new NPCModel(3,"Dorfbewohner","Schöner Tag heute.",0,0));
+		NPCLIST.add(new NPCModel(4,"Dorfbewohnerin","Die Heilerin hat tolle Kräuter.",0,0));
+		NPCLIST.add(new NPCModel(5,"Alter Dorfbewohner","Ein Blick beim Händler lohnt sich.",0,0));
+		NPCLIST.add(new NPCModel(6,"Alte Dorfbewohnerin","Früher war hier alles ganz anders.",0,0));
+		NPCLIST.add(new NPCModel(7,"Junger Dorfbewohner","Ich möchte später ein Held werden!",0,0));
+		NPCLIST.add(new NPCModel(8,"Junge Dorfbewohnerin","Ich sammele jeden Tag schöne Blumen.",0,0));
+
 	}
 
 	public static List<NPCModel> getNpcList() {
@@ -25,3 +35,4 @@ public class NPCRepository {
 	}
 
 }
+
