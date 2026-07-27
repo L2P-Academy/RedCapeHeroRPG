@@ -2,31 +2,115 @@
 package view;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.*;
+
+import controller.AnimationController;
+import controller.SoundController;
 
 public class MenuView extends JFrame {
 	// UI attributes
 	private JButton newGameBtn, loadGameBtn, settingsBtn, highScoreBtn, exitBtn;
-	private JLabel titleLbl;
+	private JLabel satireLbl;
 	private BackGroundPanel backGroundPnl;
+	private JPanel buttonPnl;
 
 	// paths
 	private String backGroundPath = "/backgrounds/Red_Cape_Hero_Menu_BG.png";
 
 	public MenuView() {
-		// setUndecorated(true); // randlos
+		setExtendedState(JFrame.MAXIMIZED_BOTH); // Vollbild
+		setUndecorated(true); // fullscreen - randlos
 		setTitle("Red Cape Hero - Hauptmenü");
 		setAlwaysOnTop(true); // Fokus setzen
-		setExtendedState(JFrame.MAXIMIZED_BOTH); // Vollbild
-		
+
 		ImageIcon bgIcon = new ImageIcon(getClass().getResource(backGroundPath));
 		backGroundPnl = new BackGroundPanel(bgIcon.getImage());
 		backGroundPnl.setLayout(new BorderLayout());
 
-		// TODO: fill window with UI elements! (for Monday, 27.07.26)
+		satireLbl = new JLabel("Satire!");
+		Font gameFont = AnimationController.loadDungeonFont(72f);
+		satireLbl.setFont(gameFont);
+		satireLbl.setForeground(Color.RED);
+
+		// buttons
+		buttonPnl = new JPanel(new FlowLayout());
+		buttonPnl.setOpaque(false);
+
+		newGameBtn = new JButton("Neues Spiel");
+		AnimationController.beautifyButton(newGameBtn);
+		loadGameBtn = new JButton("Spiel laden");
+		AnimationController.beautifyButton(loadGameBtn);
+		settingsBtn = new JButton("Einstellungen");
+		AnimationController.beautifyButton(settingsBtn);
+		highScoreBtn = new JButton("Bestenliste");
+		AnimationController.beautifyButton(highScoreBtn);
+		exitBtn = new JButton("Spiel Beenden");
+		AnimationController.beautifyButton(exitBtn);
+
+		buttonPnl.add(newGameBtn);
+		buttonPnl.add(loadGameBtn);
+		buttonPnl.add(settingsBtn);
+		buttonPnl.add(highScoreBtn);
+		buttonPnl.add(exitBtn);
+
+		backGroundPnl.add(satireLbl, BorderLayout.NORTH);
+		backGroundPnl.add(buttonPnl, BorderLayout.SOUTH);
+
+		// Actions
+		newGameBtn.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// for testing -> Character Creation
+				SoundController.playBtnSound();
+				new CharacterCreationView();
+				dispose();
+			}
+		});
+
+		loadGameBtn.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// for testing -> GameView
+				SoundController.playBtnSound();
+				new GameView();
+				dispose();
+			}
+		});
+
+		settingsBtn.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				SoundController.playBtnSound();
+				new SettingsView();
+			}
+		});
+
+		highScoreBtn.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				SoundController.playBtnSound();
+				new HighScoreView();
+			}
+		});
+
+		exitBtn.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				SoundController.playBtnSound();
+				dispose();
+			}
+		});
+
 		getContentPane().add(backGroundPnl);
-		setLocationRelativeTo(null); // zentriert
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // X-funktioniert
 		setVisible(true); // sichtbar machen
 	}

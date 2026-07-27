@@ -2,6 +2,8 @@ package controller;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.GraphicsEnvironment;
+import java.io.InputStream;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -18,12 +20,12 @@ public class AnimationController {
 	 */
 	public static void beautifyButton(JButton button) {
 		button.setFocusPainted(false);
-		button.setBackground(new Color(16, 62, 161));
-		button.setForeground(Color.WHITE);
-		button.setFont(new Font("Calibri", 0, 24));
+		button.setBackground(new Color(189, 2, 0));
+		button.setForeground(Color.BLACK);
+		button.setFont(loadDungeonFont(64f));
 
 		// Rounded Corners
-		Border border = BorderFactory.createLineBorder(new Color(255, 255, 255), 2);
+		Border border = BorderFactory.createLineBorder(new Color(237, 158, 12), 2);
 		Border roundedBorder = BorderFactory.createCompoundBorder(border,
 				BorderFactory.createEmptyBorder(10, 20, 10, 20));
 		button.setBorder(
@@ -32,11 +34,11 @@ public class AnimationController {
 		// color change when MouseOver is happening
 		button.addMouseListener(new java.awt.event.MouseAdapter() {
 			public void mouseEntered(java.awt.event.MouseEvent evt) {
-				button.setBackground(new Color(37, 232, 7));
+				button.setBackground(new Color(237, 158, 12));
 			}
 
 			public void mouseExited(java.awt.event.MouseEvent evt) {
-				button.setBackground(new Color(16, 62, 161));
+				button.setBackground(new Color(189, 2, 0));
 			}
 		});
 	}
@@ -53,5 +55,19 @@ public class AnimationController {
 		table.getTableHeader().setBackground(Color.DARK_GRAY);
 		table.getTableHeader().setForeground(Color.WHITE);
 		table.setForeground(Color.BLACK);
+	}
+	
+	// Fontloader for gamefont
+	public static Font loadDungeonFont(float size) {
+		try {
+			InputStream is = AnimationController.class.getResourceAsStream("/fonts/dungeon_font.TTF");
+			Font font = Font.createFont(Font.TRUETYPE_FONT, is).deriveFont(size);
+			GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+			ge.registerFont(font);
+			return font;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new Font("Monospaced", Font.PLAIN, (int) size);
+		}
 	}
 }
