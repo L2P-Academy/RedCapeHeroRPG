@@ -46,6 +46,7 @@ public class GameView {
     //Erstellung der Hud Anzeige
     public class HudPanel extends JPanel{
     	public HudPanel() {
+    		setOpaque(false);
 
     	}
     	
