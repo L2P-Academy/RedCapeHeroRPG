@@ -21,6 +21,7 @@ import controller.AnimationController;
 public class GameView extends JFrame {
 
     private JPanel gameField, dialogBoxPanel, xpHudPanel, lifeHudPanel, abilityHudPanel, miniMap;
+    private GamePanel gamePanel;
     private JLabel timeStamp, coordinates, npcPicture ;
     private JProgressBar healthPoints, abilityPoints, xperiencePoints;
     private boolean isDialogActive = false;
@@ -52,6 +53,8 @@ public class GameView extends JFrame {
         Font gameFont = AnimationController.loadDungeonFont(42f);
         gameField = new JPanel(new BorderLayout());
         gameField.setBackground(Color.BLACK);
+        
+        gamePanel = new GamePanel();
         
 	        timeStamp = new JLabel("00:00:00"); // Ist nur Testweise erstmal vorhanden
 	        timeStamp.setForeground(Color.WHITE);
@@ -115,6 +118,7 @@ public class GameView extends JFrame {
 
         // Füge alles dem Spielfeld hinzu
         gameField.add(topContainer, BorderLayout.NORTH);
+        gameField.add(gamePanel, BorderLayout.CENTER);
         gameField.add(bottomContainer, BorderLayout.SOUTH);
 
         add(gameField, BorderLayout.CENTER);
