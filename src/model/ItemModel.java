@@ -67,5 +67,17 @@ public class ItemModel {
 	}
 	
 	
+	// Information des Items als String
+	@Override
+	public String toString() {
+		return "ID: " + id +
+				"\nName: " + name +
+				"\nBeschreibung: " + description +
+				"\nWert: " + value +
+				"\nSeltenheit: " + rarityLvl;
+			}
+	
+	
+	
 	
 }

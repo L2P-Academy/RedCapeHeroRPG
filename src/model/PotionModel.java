@@ -46,5 +46,28 @@ public class PotionModel extends ItemModel {
 		this.durationSeconds = durationSeconds;
 	}
 	
+	//Verwendet einen Trank
+	
+	public void use () {
+		
+		System.out.println(getName() + " benutzt!");
+		
+		if (durationSeconds > 0) {
+			System.out.println ("Effekt: " + effectType + " (+" + statChange + ") für " + durationSeconds + " Sekunden.");
+			} else {
+				System.out.println ("Effekt: " + effectType + " (+" + statChange + ")");
+			}	
+		}
+	
+	
+	//Informationen des Tranks als String
+	
+	@Override
+	public String toString() {
+		return super.toString()+
+				"\nStatänderungen:" + statChange + 
+				"\nEffekttyp: " + effectType +
+				"\nWirkungsdauer: " + durationSeconds + " Sekunden";
+	}
 	
 }

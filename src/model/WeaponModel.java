@@ -47,5 +47,25 @@ public class WeaponModel extends ItemModel {
 		this.minimumLvl = minimumLvl;
 	}
 		
+	// Angriff mit einer Waffe
+	public void attack() {
+		if (durability > 0) {
+			System.out.println("Angriff mit" + getName() + "! Schaden:" + damage);
+			durability--;
+			
+	} else {
+			System.out.println (getName()+ "kann nicht mehr benutz werden.");
+			}
+		
+	}
+	
+	//Information der Waffe als String
+	@Override
+	public String toString() {
+		return super.toString() +
+				"\nSchaden: " + damage +
+				"\nHaltbarkeit: " + durability +
+				"\nMindestlevel: " + minimumLvl;
+	}
 	
 }
