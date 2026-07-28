@@ -42,6 +42,7 @@ public class CharacterCreationView extends JFrame {
         setDefaultCloseOperation(DISPOSE_ON_CLOSE); // Damit es auch zu geht
         setLayout(new BorderLayout(15, 15));
         Font gameFont = AnimationController.loadDungeonFont(40f);
+        Color red = new Color(139, 0, 0);
         
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT)); // Kopfzeile für die Erstellung
         JLabel nameLabel = new JLabel("Charaktername");
@@ -49,6 +50,7 @@ public class CharacterCreationView extends JFrame {
         topPanel.add(nameLabel);
         nameField = new JTextField(20); // Das Namensfeld
         nameField.setFont(gameFont); // Schrift für das Eingabefeld
+        nameField.setForeground(red);
         topPanel.add(nameField);
 
         add(topPanel, BorderLayout.NORTH); // Panel oben
@@ -58,6 +60,7 @@ public class CharacterCreationView extends JFrame {
         		ClassRepository.getClasslist().toArray(new ClassModel [0])); // und macht ein Array draus
         classList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION); // Auswahl mit einer einzelauswahl
         classList.setFont(gameFont); // Schrift für die Liste setzen
+        classList.setForeground(red);
         JScrollPane classScroll = new JScrollPane(classList); //
         classScroll.setPreferredSize(new java.awt.Dimension(200, 200));
         add(classScroll, BorderLayout.WEST);
@@ -70,7 +73,7 @@ public class CharacterCreationView extends JFrame {
         descriptionArea.setLineWrap(true); // Zeilenumbruch zulassen
         descriptionArea.setWrapStyleWord(true); // Zeilumbruch auf Wortebene
         descriptionArea.setFont(gameFont); // Schrift für die Beschreibung setzen
-        
+        descriptionArea.setForeground(red);
         centerPanel.add(new JScrollPane(descriptionArea), BorderLayout.CENTER); // Ort der Beschreibung mitte
         
         // Stats
