@@ -93,7 +93,7 @@ public class CharacterCreationView extends JFrame {
         
         classList.addListSelectionListener(e -> { // Passt auf das was passiert
             if (!e.getValueIsAdjusting()) { 
-                ClassModel selected = classList.getSelectedValue(); 
+                ClassModel selected = classList.getSelectedValue(); // Nimmt die Classlist
                 if (selected != null) {
                     descriptionArea.setText(selected.getDescription());
                     strengthLabel.setText(
