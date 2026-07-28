@@ -57,7 +57,7 @@ public class GameView extends JFrame {
 	        timeStamp.setForeground(Color.WHITE);
 	        timeStamp.setFont(gameFont);
 	        
-	        coordinates = new JLabel("X: 0 || Y: 0"); // Auch hier nur zum anzeige test erstmal 
+	        coordinates = new JLabel();
 	        coordinates.setForeground(Color.WHITE);
 	        coordinates.setFont(gameFont);
 	        coordinates.setHorizontalAlignment(JLabel.CENTER);
@@ -73,7 +73,7 @@ public class GameView extends JFrame {
 		        healthPoints = createProgressBar(100, 50, 300, Color.RED);
 		        lifeHudPanel = createStatPanel(healthPoints, BorderLayout.WEST);
 		        
-		        abilityPoints = createProgressBar(100, 50, 300, Color.BLUE);
+		        abilityPoints = createProgressBar(100, 50, 300, Color.GREEN);
 		        abilityHudPanel = createStatPanel(abilityPoints, BorderLayout.EAST);
 		
 		        // Container für die Statuswerte
@@ -135,10 +135,23 @@ public class GameView extends JFrame {
 	        bar.setForeground(color);
 	        bar.setBorderPainted(false);
 	        bar.setFont(gameFont);
+	        
+	        updateProgressBarText(bar);
+	        
+	        bar.addChangeListener(event -> {
+	        	JProgressBar source = (JProgressBar) event.getSource();
+		        updateProgressBarText(source);
+	        });
+	        
         return bar;
     }
 
-    //Setzt die Status Panels in der entsprechende Position
+    private void updateProgressBarText(JProgressBar bar) {
+		bar.setString(bar.getValue() + " %");		
+	}
+
+
+	//Setzt die Status Panels in der entsprechende Position
     private JPanel createStatPanel(JProgressBar bar, String position) {
         JPanel panel = new JPanel(new BorderLayout(15, 0));
 	        panel.setOpaque(false);
@@ -152,7 +165,7 @@ public class GameView extends JFrame {
         JPanel panel = new JPanel(new BorderLayout(15, 0));
         	panel.setOpaque(false);
 
-        xperiencePoints = createProgressBar(value,20, 1720, Color.GREEN);
+        xperiencePoints = createProgressBar(value,20, 1720, Color.BLUE);
 
         JLabel xpLabel = new JLabel("XP:");
         	xpLabel.setForeground(Color.WHITE);
@@ -209,8 +222,7 @@ public class GameView extends JFrame {
             xperiencePoints.setValue(xp);
         }
     }   
-    
-    
+        
     // Erlaubt es dem Controller, Tastenbefehle an das Spielfeld zu binden
     public void addKeyBinding(KeyStroke keyStroke, String actionName, AbstractAction action) {
         gameField.getInputMap(JPanel.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, actionName);
