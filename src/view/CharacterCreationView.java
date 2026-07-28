@@ -41,20 +41,25 @@ public class CharacterCreationView extends JFrame {
 		setExtendedState(JFrame.MAXIMIZED_BOTH); // Fenstergröße
         setDefaultCloseOperation(DISPOSE_ON_CLOSE); // Damit es auch zu geht
         setLayout(new BorderLayout(15, 15));
-        Font gameFont = AnimationController.loadDungeonFont(72f);
+        Font gameFont = AnimationController.loadDungeonFont(40f);
         
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT)); // Kopfzeile für die Erstellung
-        topPanel.add(new JLabel("Charaktername")); // Zeile für das Namensfeld
+        JLabel nameLabel = new JLabel("Charaktername");
+        nameLabel.setFont(gameFont); // Schrift für das Label
+        topPanel.add(nameLabel);
         nameField = new JTextField(20); // Das Namensfeld
-        topPanel.add(nameField); // Panel für das Namensfeld
+        nameField.setFont(gameFont); // Schrift für das Eingabefeld
+        topPanel.add(nameField);
+
         add(topPanel, BorderLayout.NORTH); // Panel oben
         
         // Klassenclownstuff
         classList = new JList <>( // Zieht sich unsere Classlist
         		ClassRepository.getClasslist().toArray(new ClassModel [0])); // und macht ein Array draus
         classList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION); // Auswahl mit einer einzelauswahl
+        classList.setFont(gameFont); // Schrift für die Liste setzen
         JScrollPane classScroll = new JScrollPane(classList); //
-        classScroll.setPreferredSize(new java.awt.Dimension(200, 400));
+        classScroll.setPreferredSize(new java.awt.Dimension(200, 200));
         add(classScroll, BorderLayout.WEST);
         
         // Charakterbeschrebung
@@ -64,6 +69,7 @@ public class CharacterCreationView extends JFrame {
         descriptionArea.setEditable(false); // nicht editierbar
         descriptionArea.setLineWrap(true); // Zeilenumbruch zulassen
         descriptionArea.setWrapStyleWord(true); // Zeilumbruch auf Wortebene
+        descriptionArea.setFont(gameFont); // Schrift für die Beschreibung setzen
         
         centerPanel.add(new JScrollPane(descriptionArea), BorderLayout.CENTER); // Ort der Beschreibung mitte
         
@@ -127,7 +133,7 @@ public class CharacterCreationView extends JFrame {
         createButton.addActionListener(new ActionListener() {
 			
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(ActionEvent e) { // Button für Erstellen damit das spiel aufgeht
 				new GameView();
 				dispose();
 			}
