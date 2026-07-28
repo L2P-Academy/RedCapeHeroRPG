@@ -20,9 +20,6 @@ public class GameStateModel {
 		this.playerName = playerName;
 		this.lastSavedAt = lastSavedAt;
 		this.playerModel = playerModel;
-		this.score = score;
-		this.tileX = tileX;
-		this.tileY = tileY;
 		this.tileInformation = tileInformation;		
 	}
 

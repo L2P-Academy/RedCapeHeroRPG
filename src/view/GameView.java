@@ -121,27 +121,35 @@ public class GameView extends JFrame {
         setVisible(true);
     }
 
-    //
-    
-    //Erstellt eine Progressbar
-    private JProgressBar createProgressBar(int value, int heigth, int width, Color color) {
+ 
+    /**
+     * Erstellt und konfiguriert eine ProgressBar.
+     * 
+     * @param value  der initiale Wert, der in der ProgressBar angezeigt werden soll
+     * @param height die Höhe der ProgressBar
+     * @param width  die Breite der ProgressBar
+     * @param color  die Vordergrundfarbe der ProgressBar
+     * @return die fertig konfigurierte JProgressBar-Instanz
+     * @author Dominik
+     */
+        
+    private JProgressBar createProgressBar(int value, int height, int width, Color color) {
         JProgressBar bar = new JProgressBar(0, 100);
         Font gameFont = AnimationController.loadDungeonFont(36f);
 	        bar.setValue(value);
 	        bar.setStringPainted(true);
 	        bar.setOpaque(false);
-	        bar.setPreferredSize(new Dimension(width,heigth));
+	        bar.setPreferredSize(new Dimension(width,height));
 	        bar.setBackground(new Color(0, 0, 0, 0));
 	        bar.setForeground(color);
 	        bar.setBorderPainted(false);
 	        bar.setFont(gameFont);
 	        
-	        updateProgressBarText(bar);
-	        
-	        bar.addChangeListener(event -> {
-	        	JProgressBar source = (JProgressBar) event.getSource();
-		        updateProgressBarText(source);
-	        });
+		        updateProgressBarText(bar);		        
+		        bar.addChangeListener(event -> {
+		        	JProgressBar source = (JProgressBar) event.getSource();
+			        updateProgressBarText(source);
+		        });
 	        
         return bar;
     }
@@ -165,7 +173,7 @@ public class GameView extends JFrame {
         JPanel panel = new JPanel(new BorderLayout(15, 0));
         	panel.setOpaque(false);
 
-        xperiencePoints = createProgressBar(value,20, 1720, Color.BLUE);
+        xperiencePoints = createProgressBar(value,20, 1720, Color.GREEN);
 
         JLabel xpLabel = new JLabel("XP:");
         	xpLabel.setForeground(Color.WHITE);
