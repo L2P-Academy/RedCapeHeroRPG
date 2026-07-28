@@ -7,6 +7,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.List;
+
+import model.ItemModel;
+import model.ItemRepository;
+import controller.AnimationController;
 
 // Class
 public class InventoryView extends JFrame {
@@ -14,11 +19,12 @@ public class InventoryView extends JFrame {
 	private static final int ROWS = 2;
 	private static final int COLS = 5;
 	private JButton[][] slots = new JButton[ROWS][COLS];
+	private ItemRepository itemRepository = new ItemRepository();
 
 	public InventoryView() {
 
 		setTitle("Inventar");
-		setSize(600, 280);
+		setSize(800, 400);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setResizable(false);
@@ -36,24 +42,27 @@ public class InventoryView extends JFrame {
 
 	private void createSlots(JPanel panel) {
 
-		// Test-Items
-		String[] items = {"Faust", "Axt", "Schwert", "", "", "Trank", "", "", "", ""};
+		// Items from Repository
+		List<ItemModel> items = itemRepository.getItems();
 
 		int index = 0;
 
 		for (int row = 0; row < ROWS; row++) {
 			for (int col = 0; col < COLS; col++) {
 
-				JButton slot = new JButton(items[index]);
+				ItemModel currentItem = (index < items.size()) ? items.get(index) : null;
+				String label = (currentItem != null) ? currentItem.getName() : "";
+
+				JButton slot = new JButton(label);
 				index++;
 
 				slot.setFocusPainted(false);
-				slot.setBackground(new Color(0, 0, 0));
-				slot.setForeground(new Color(235, 100, 5));
-				slot.setFont(new Font("Calibri", Font.BOLD, 16));
+				slot.setBackground(new Color(189, 2, 0));
+				slot.setForeground(new Color(0, 0, 0));
+				slot.setFont(AnimationController.loadDungeonFont(24f));
 
 				Color normal = slot.getBackground();
-				Color hover = new Color(237, 2, 0);
+				Color hover = new Color(237, 158, 12);
 
 				// Hover-Effect
 				slot.addMouseListener(new MouseAdapter() {
@@ -69,11 +78,13 @@ public class InventoryView extends JFrame {
 					}
 				});
 
-				slot.addActionListener(e -> {
-					String item = slot.getText();
+				final ItemModel item = currentItem;
 
-					if (!item.isBlank()) {
-						System.out.println("Gewähltes Item: " + item);
+				slot.addActionListener(e -> {
+					if (item != null) {
+						System.out.println("Gewähltes Item: " + item.getName());
+						System.out.println("Beschreibung: " + item.getDescription());
+						System.out.println("Wert: " + item.getValue());
 					} else {
 						System.out.println("Leerer Slot");
 					}
@@ -86,10 +97,9 @@ public class InventoryView extends JFrame {
 		}
 	}
 
-	// TEST
-	public static void main(String[] args) {
-
-		SwingUtilities.invokeLater(InventoryView::new);
-
-	}
+	/*
+	 * TEST public static void main(String[] args) {
+	 * 
+	 * SwingUtilities.invokeLater(InventoryView::new); }
+	 */
 }
