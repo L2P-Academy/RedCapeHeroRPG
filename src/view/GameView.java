@@ -57,7 +57,7 @@ public class GameView extends JFrame {
 	        timeStamp.setForeground(Color.WHITE);
 	        timeStamp.setFont(gameFont);
 	        
-	        coordinates = new JLabel("X: 0 || Y: 0"); // Auch hier nur zum anzeige test erstmal 
+	        coordinates = new JLabel();
 	        coordinates.setForeground(Color.WHITE);
 	        coordinates.setFont(gameFont);
 	        coordinates.setHorizontalAlignment(JLabel.CENTER);
@@ -209,8 +209,7 @@ public class GameView extends JFrame {
             xperiencePoints.setValue(xp);
         }
     }   
-    
-    
+        
     // Erlaubt es dem Controller, Tastenbefehle an das Spielfeld zu binden
     public void addKeyBinding(KeyStroke keyStroke, String actionName, AbstractAction action) {
         gameField.getInputMap(JPanel.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, actionName);
