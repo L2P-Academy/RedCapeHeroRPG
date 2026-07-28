@@ -30,7 +30,7 @@ public class GameView extends JFrame {
         initComponents();
         setDialogActive(isDialogActive); 
         
-        setupKeyBindings(); 
+        setupKeyBindings(); // zum testen
     }
     
     
@@ -48,7 +48,6 @@ public class GameView extends JFrame {
             repaint();
         }
     }
-
        
     //Setzt alles zusammen zu einem HUD
     private void initComponents() {
@@ -63,6 +62,7 @@ public class GameView extends JFrame {
 	        coordinates = new JLabel("X: 0 || Y: 0"); // Auch hier nur zum anzeige test erstmal 
 	        coordinates.setForeground(Color.WHITE);
 	        coordinates.setFont(gameFont);
+	        coordinates.setHorizontalAlignment(JLabel.CENTER);
 	        
 	        miniMap = new JPanel();
 	        miniMap.setPreferredSize(new Dimension(200, 200)); // Beispielgröße
@@ -90,7 +90,7 @@ public class GameView extends JFrame {
 		        bottomContainer.add(statsContainer, BorderLayout.NORTH);
 		        bottomContainer.add(dialogBoxPanel, BorderLayout.SOUTH);	        
 	        
-		        xpHudPanel = createXpHud(30);    	        
+		        xpHudPanel = createXpHud(100);    	        
 		        
 			        // Container für die linke Seite, damit die Zeit ganz oben am Rand klebt
 			        JPanel leftSideContainer = new JPanel(new BorderLayout());
@@ -128,6 +128,7 @@ public class GameView extends JFrame {
     //Erstellt eine Progressbar
     private JProgressBar createProgressBar(int value, int heigth, int width, Color color) {
         JProgressBar bar = new JProgressBar(0, 100);
+        Font gameFont = AnimationController.loadDungeonFont(36f);
 	        bar.setValue(value);
 	        bar.setStringPainted(true);
 	        bar.setOpaque(false);
@@ -135,6 +136,7 @@ public class GameView extends JFrame {
 	        bar.setBackground(new Color(0, 0, 0, 0));
 	        bar.setForeground(color);
 	        bar.setBorderPainted(false);
+	        bar.setFont(gameFont);
         return bar;
     }
 
@@ -148,6 +150,7 @@ public class GameView extends JFrame {
 
     // Erstellt ein XP Hud und nutzt die Progressbar Methode
     private JPanel createXpHud(int value) {
+    	Font gameFont = AnimationController.loadDungeonFont(24f);
         JPanel panel = new JPanel(new BorderLayout(15, 0));
         	panel.setOpaque(false);
 
@@ -155,9 +158,12 @@ public class GameView extends JFrame {
 
         JLabel xpLabel = new JLabel("XP:");
         	xpLabel.setForeground(Color.WHITE);
+        	xpLabel.setFont(gameFont);
+
 
         JLabel lvlLabel = new JLabel("LVL: 100");
         	lvlLabel.setForeground(Color.WHITE);
+        	lvlLabel.setFont(gameFont);
         
         panel.add(xperiencePoints, BorderLayout.CENTER);
         panel.add(xpLabel, BorderLayout.WEST);
@@ -168,18 +174,19 @@ public class GameView extends JFrame {
 
     //Erstellt die Box für Dialoge mit NPC Bild
     private JPanel createDialogBox() {
-
+    	Font gameFont = AnimationController.loadDungeonFont(36f);
         JPanel panel = new JPanel(new BorderLayout(15, 10));
 	        panel.setPreferredSize(new Dimension(0, 150));
 	        panel.setBackground(Color.LIGHT_GRAY);
 
 
-        JLabel dialogBoxLabel = new JLabel(" Hier könnte ein Dialogtext stehen, wenn ich dafür bezahöt werden würde.");
+        JLabel dialogBoxLabel = new JLabel(" Hier steht ein Text zum testen");
         	dialogBoxLabel.setForeground(Color.BLACK);
+        	dialogBoxLabel.setFont(gameFont);
 
 
         npcPicture = new JLabel("NPC BILD", JLabel.CENTER);
-        npcPicture.setPreferredSize(new Dimension(130, 130));
+        npcPicture.setPreferredSize(new Dimension(200, 200));
         npcPicture.setOpaque(true);
         npcPicture.setBackground(Color.DARK_GRAY);
         npcPicture.setForeground(Color.WHITE);
@@ -206,12 +213,5 @@ public class GameView extends JFrame {
                 setDialogActive(isDialogActive);  
             }
         });
-    }
-
-    // Main ist nur zum testen da
-    public static void main(String[] args) {
-
-        SwingUtilities.invokeLater(() -> new GameView());        
-
     }
 }

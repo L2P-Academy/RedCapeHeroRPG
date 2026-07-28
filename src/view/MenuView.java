@@ -8,7 +8,12 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.*;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 import controller.AnimationController;
 import controller.SoundController;
@@ -83,8 +88,8 @@ public class MenuView extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				// for testing -> GameView
 				SoundController.playBtnSound();
-				SoundController.stopMusicLoop();
-				new GameView();
+				SoundController.stopMusicLoop();				
+				SwingUtilities.invokeLater(() -> new GameView());
 				dispose();
 			}
 		});
