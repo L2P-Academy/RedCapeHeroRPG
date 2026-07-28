@@ -2,65 +2,57 @@ package view;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
+import javax.swing.JFrame;
 
 import model.SettingsModel;
 
-public class SettingsView {
+public class SettingsView extends JFrame {
 
     private String[] options = {"Volume", "Resolution", "Gamma", "Back to Menu"};
     private int selectedIndex = 0;
 
-    public void render(Graphics2D g, SettingsModel settings) {
+    // Constructor
+    public SettingsView() {
+        setTitle("Red Cape Hero - Settings");
+        setSize(800, 600);
+        setLocationRelativeTo(null); // Center window on screen
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Close only this window
+        setVisible(true); // Make window visible
+    }
+
+    @Override
+    public void paint(Graphics g) {
+        super.paint(g);
+        Graphics2D g2d = (Graphics2D) g;
+
         // Background
-        g.setColor(new Color(16, 62, 161, 200));
-        g.fillRect(0, 0, 800, 600);
+        g2d.setColor(new Color(16, 62, 161));
+        g2d.fillRect(0, 0, getWidth(), getHeight());
 
         // Titel
-        g.setFont(new Font("Arial", Font.BOLD, 36));
-        g.setColor(Color.WHITE);
-        g.drawString("SETTINGS", 310, 90);
+        g2d.setFont(new Font("Calibri", Font.BOLD, 36));
+        g2d.setColor(Color.WHITE);
+        g2d.drawString("SETTINGS", 310, 100);
 
         // Menu
-        g.setFont(new Font("Arial", Font.PLAIN, 24));
-
+        g2d.setFont(new Font("Calibri", Font.PLAIN, 24));
         for (int i = 0; i < options.length; i++) {
-            int y = 180 + (i * 50);
+            int y = 200 + (i * 60);
 
-            // Selected item yellow, others white
             if (i == selectedIndex) {
-                g.setColor(Color.YELLOW);
-                g.drawString("> " + options[i], 200, y);
+                g2d.setColor(new Color(37, 232, 7)); 
+                g2d.drawString("> " + options[i], 250, y);
             } else {
-                g.setColor(Color.WHITE);
-                g.drawString("  " + options[i], 200, y);
-            }
-
-            // Display values from SettingsModel
-            if (settings != null) {
-                g.setColor(Color.LIGHT_GRAY);
-                
-                if (i == 0) {
-                    g.drawString("< " + settings.getVolume() + "% >", 480, y);
-                } else if (i == 1) {
-                    g.drawString("< " + settings.getResolution() + " >", 480, y);
-                } else if (i == 2) {
-                    g.drawString("< " + settings.getGamma() + " >", 480, y);
-                }
+                g2d.setColor(Color.WHITE);
+                g2d.drawString("  " + options[i], 250, y);
             }
         }
-
-        // Control instructions
-        g.setFont(new Font("Arial", Font.PLAIN, 14));
-        g.setColor(Color.GRAY);
-        g.drawString("[W/S] Navigate   |   [A/D] Change Value   |   [ESC] Back", 190, 520);
     }
 
-    public void setSelectedIndex(int index) {
-        this.selectedIndex = index;
-    }
-
-    public int getSelectedIndex() {
-        return selectedIndex;
+    // Zum Testen
+    public static void main(String[] args) {
+        new SettingsView();
     }
 }
