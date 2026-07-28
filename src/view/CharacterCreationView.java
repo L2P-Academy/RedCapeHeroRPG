@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -121,6 +123,15 @@ public class CharacterCreationView extends JFrame {
         if (!ClassRepository.getClasslist().isEmpty()) {
             classList.setSelectedIndex(0);
         }
+        
+        createButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new GameView();
+				dispose();
+			}
+		});
 
         // Abbrechen Knopf bricht ab
         cancelButton.addActionListener(e -> { // Knopf
