@@ -20,9 +20,10 @@ public class GameController {
     private boolean isInventoryActive = false;
 
     // Wir bleiben beim gewohnten 2-Parameter-Konstruktor!
-    public GameController(GameView view, GameStateModel model) {
+    public GameController(GameView view, GameStateModel modelG) {
         this.view = view;
-        this.modelG = model;       
+        this.modelG = modelG; 
+        this.modelP = modelG.getPlayerModel();
         
         this.inventoryView = new InventoryView();
         this.inventoryView.setVisible(false);
@@ -43,7 +44,7 @@ public class GameController {
         view.addKeyBinding(KeyStroke.getKeyStroke("W"), "moveUp", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                movePlayer(0, -1);
+                movePlayer(0, 1);
             }
         });
 
@@ -51,7 +52,7 @@ public class GameController {
         view.addKeyBinding(KeyStroke.getKeyStroke("S"), "moveDown", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                movePlayer(0, 1);
+                movePlayer(0, -1);
             }
         });
 
