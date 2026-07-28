@@ -18,7 +18,9 @@ import javax.swing.SwingUtilities;
 import controller.AnimationController;
 import controller.GameController;
 import controller.SoundController;
+import model.ClassModel;
 import model.GameStateModel;
+import model.PlayerModel;
 
 public class MenuView extends JFrame {
 	// UI attributes
@@ -91,17 +93,41 @@ public class MenuView extends JFrame {
 				// for testing -> GameView
 				SoundController.playBtnSound();
 				SoundController.stopMusicLoop();				
-				// 1. Model mit Test-Startwerten erschaffen
+				
+                ClassModel testClass = new ClassModel(
+                        1,                            // id
+                        "Test-Ritter",                // name
+                        "Eine Klasse zum Testen",     // description
+                        5,                            // bonusStrength
+                        5,                            // bonusEndurance
+                        2                             // bonusDamage
+                );
+                
+                PlayerModel testPlayer = new PlayerModel(
+                        150,          // playerPosX
+                        250,          // playerPosY
+                        "TestHero",   // name
+                        100,          // maxHealth
+                        10,           // strength
+                        10,           // endurance
+                        5,            // baseDmg
+                        2,            // baseArmor
+                        testClass     // Alberts ClassModel übergeben!
+                );
+                
+                testPlayer.setCurrentXp(35); 
+                
                 long currentTime = System.currentTimeMillis();
                 GameStateModel testModel = new GameStateModel(
-                        "TestHero",                     // Spielername
-                        new java.sql.Date(currentTime), // Speicherzeit
-                        null,                           // PlayerModel (noch nicht vorhanden)
-                        35,                             // Start-Score (nutzen wir hier für XP)
-                        150,                            // Start X-Koordinate
-                        250,                            // Start Y-Koordinate
-                        null                            // Hashmap (noch nicht vorhanden)
+                        "TestHero",                     
+                        new java.sql.Date(currentTime), 
+                        testPlayer,                     // <-- Unser PlayerModel!
+                        35,                             
+                        150,                            
+                        250,                            
+                        null                            
                 );
+                
                 SwingUtilities.invokeLater(() -> {
                     GameView gameView = new GameView();
                     GameController controller = new GameController(gameView, testModel);
