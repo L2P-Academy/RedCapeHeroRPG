@@ -1,6 +1,7 @@
 package view;
 // Jens
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 
@@ -14,8 +15,11 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 
+import controller.AnimationController;
 import model.ClassModel;
 import model.ClassRepository;
+
+import java.awt.Font;
 
 public class CharacterCreationView extends JFrame {
     private JTextField nameField; // Namensfeld
@@ -35,8 +39,7 @@ public class CharacterCreationView extends JFrame {
 		setExtendedState(JFrame.MAXIMIZED_BOTH); // Fenstergröße
         setDefaultCloseOperation(DISPOSE_ON_CLOSE); // Damit es auch zu geht
         setLayout(new BorderLayout(15, 15));
-
-        
+        Font gameFont = AnimationController.loadDungeonFont(72f);
         
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT)); // Kopfzeile für die Erstellung
         topPanel.add(new JLabel("Charaktername")); // Zeile für das Namensfeld
@@ -66,8 +69,15 @@ public class CharacterCreationView extends JFrame {
         JPanel statsPanel = new JPanel(new GridLayout(3, 1)); // Layout für die Stats 3 Stats daher 3 
 
         strengthLabel = new JLabel("Strength: "); // Stärkelebel
+        strengthLabel.setFont(gameFont);
+        strengthLabel.setForeground(Color.RED);
         enduranceLabel = new JLabel("Endurance: "); // Ausdauerlabel
+        enduranceLabel.setFont(gameFont);
+        enduranceLabel.setForeground(Color.RED);
         damageLabel = new JLabel("Damage: "); // Schadenslabel
+        damageLabel.setFont(gameFont);
+        damageLabel.setForeground(Color.RED);
+        
 
         statsPanel.add(strengthLabel); // Hinzufügen des Labels
         statsPanel.add(enduranceLabel); // Hinzufügen des Labels
@@ -81,7 +91,9 @@ public class CharacterCreationView extends JFrame {
         JPanel bottomPanel = new JPanel(); // Panel für die Button
 
         createButton = new JButton("Charakter Erstellen"); // Button fürs Erstellen
+        AnimationController.beautifyButton(createButton);
         cancelButton = new JButton("Abbrechen"); // Button fürs Abbrechen
+        AnimationController.beautifyButton(cancelButton);
 
         bottomPanel.add(createButton); // Btn erzeugen
         bottomPanel.add(cancelButton); // Btn erzeugen
