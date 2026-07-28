@@ -16,7 +16,9 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import controller.AnimationController;
+import controller.GameController;
 import controller.SoundController;
+import model.GameStateModel;
 
 public class MenuView extends JFrame {
 	// UI attributes
@@ -89,7 +91,21 @@ public class MenuView extends JFrame {
 				// for testing -> GameView
 				SoundController.playBtnSound();
 				SoundController.stopMusicLoop();				
-				SwingUtilities.invokeLater(() -> new GameView());
+				// 1. Model mit Test-Startwerten erschaffen
+                long currentTime = System.currentTimeMillis();
+                GameStateModel testModel = new GameStateModel(
+                        "TestHero",                     // Spielername
+                        new java.sql.Date(currentTime), // Speicherzeit
+                        null,                           // PlayerModel (noch nicht vorhanden)
+                        35,                             // Start-Score (nutzen wir hier für XP)
+                        150,                            // Start X-Koordinate
+                        250,                            // Start Y-Koordinate
+                        null                            // Hashmap (noch nicht vorhanden)
+                );
+                SwingUtilities.invokeLater(() -> {
+                    GameView gameView = new GameView();
+                    GameController controller = new GameController(gameView, testModel);
+                });
 				dispose();
 			}
 		});

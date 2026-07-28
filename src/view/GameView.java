@@ -28,16 +28,14 @@ public class GameView extends JFrame {
     public GameView() {
         initWindow();
         initComponents();
-        setDialogActive(isDialogActive); 
-        
-        setupKeyBindings(); // zum testen
+        setDialogActive(isDialogActive);        
     }
     
     
     private void initWindow() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
-        setAlwaysOnTop(true);
+        //setAlwaysOnTop(true); // Vorrübergehend auskommenbtiert umd das Inventar zu testen
         setSize(1920, 1080);
     }
 
@@ -197,21 +195,25 @@ public class GameView extends JFrame {
         return panel;
     }
 
- // Metthode nur zum Testen der Dialog Box, erstellung erfolgte von der KI 
-    private void setupKeyBindings() {
-        // Verbindet die Taste "E" mit dem Befehlswort "toggleDialog"
-        gameField.getInputMap(JPanel.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("E"), "toggleDialog");
-        
-        // Sagt dem Programm, was bei "toggleDialog" passieren soll
-        gameField.getActionMap().put("toggleDialog", new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Kehrt den aktuellen Wert um (aus false wird true, aus true wird false)
-                isDialogActive = !isDialogActive; 
-                
-                // Ruft deine bereits vorhandene Methode auf
-                setDialogActive(isDialogActive);  
-            }
-        });
+    
+ // Aktualisiert die Koordinaten-Anzeige
+    public void updateCoordinates(int x, int y) {
+        if (coordinates != null) {
+            coordinates.setText("X: " + x + " || Y: " + y);
+        }
+    }
+
+    // Aktualisiert die XP-Leiste (Wir nutzen hier Testweise den Score)
+    public void updateXP(int xp) {
+        if (xperiencePoints != null) {
+            xperiencePoints.setValue(xp);
+        }
+    }   
+    
+    
+    // Erlaubt es dem Controller, Tastenbefehle an das Spielfeld zu binden
+    public void addKeyBinding(KeyStroke keyStroke, String actionName, AbstractAction action) {
+        gameField.getInputMap(JPanel.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, actionName);
+        gameField.getActionMap().put(actionName, action);
     }
 }
