@@ -22,12 +22,16 @@ public class MenuView extends JFrame {
 
 	// paths
 	private String backGroundPath = "/backgrounds/Red_Cape_Hero_Menu_BG.png";
+	private String musicPath = "res/sounds/titlescreen.wav";
 
 	public MenuView() {
 		setExtendedState(JFrame.MAXIMIZED_BOTH); // Vollbild
 		setUndecorated(true); // fullscreen - randlos
 		setTitle("Red Cape Hero - Hauptmenü");
 		setAlwaysOnTop(true); // Fokus setzen
+		
+		// start playing music
+		SoundController.playMusicLoop(musicPath);
 
 		ImageIcon bgIcon = new ImageIcon(getClass().getResource(backGroundPath));
 		backGroundPnl = new BackGroundPanel(bgIcon.getImage());
@@ -68,6 +72,7 @@ public class MenuView extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				// for testing -> Character Creation
 				SoundController.playBtnSound();
+				SoundController.stopMusicLoop();
 				new CharacterCreationView();
 				dispose();
 			}
@@ -78,6 +83,7 @@ public class MenuView extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				// for testing -> GameView
 				SoundController.playBtnSound();
+				SoundController.stopMusicLoop();
 				new GameView();
 				dispose();
 			}
@@ -106,6 +112,7 @@ public class MenuView extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				SoundController.playBtnSound();
+				SoundController.stopMusicLoop();
 				dispose();
 			}
 		});

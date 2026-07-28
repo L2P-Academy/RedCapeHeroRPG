@@ -69,5 +69,10 @@ public class ClassModel {
 	public void setBonusDamage(int bonusDamage) {
 		this.bonusDamage = bonusDamage;
 	}
+	
+	@Override
+	public String toString() {
+		return name;
+	}
 
 }
