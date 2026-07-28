@@ -5,13 +5,15 @@ import javax.swing.AbstractAction;
 import javax.swing.KeyStroke;
 
 import model.GameStateModel;
+import model.PlayerModel;
 import view.GameView;
 import view.InventoryView;
 
 public class GameController {
 
     private GameView view;
-    private GameStateModel model;    
+    private GameStateModel modelG;   
+    private	PlayerModel modelP;
     private InventoryView inventoryView; // Das Inventar-Fenster
     
     private boolean isDialogActive = false;
@@ -20,7 +22,7 @@ public class GameController {
     // Wir bleiben beim gewohnten 2-Parameter-Konstruktor!
     public GameController(GameView view, GameStateModel model) {
         this.view = view;
-        this.model = model;       
+        this.modelG = model;       
         
         this.inventoryView = new InventoryView();
         this.inventoryView.setVisible(false);
@@ -30,12 +32,44 @@ public class GameController {
     }
     
     private void initGame() {
-        view.updateCoordinates(model.getTileX(), model.getTileY());
-        view.updateXP(model.getScore());
+        view.updateCoordinates(modelP.getPlayerPosX(), modelP.getPlayerPosY());
+        view.updateXP(modelP.getCurrentXp());
         view.setDialogActive(isDialogActive);
     }
 
     private void setupControllerInput() {
+    	
+    	// W = Nach oben (Y wird kleiner)
+        view.addKeyBinding(KeyStroke.getKeyStroke("W"), "moveUp", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                movePlayer(0, -1);
+            }
+        });
+
+        // S = Nach unten (Y wird größer)
+        view.addKeyBinding(KeyStroke.getKeyStroke("S"), "moveDown", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                movePlayer(0, 1);
+            }
+        });
+
+        // A = Nach links (X wird kleiner)
+        view.addKeyBinding(KeyStroke.getKeyStroke("A"), "moveLeft", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                movePlayer(-1, 0);
+            }
+        });
+
+        // D = Nach rechts (X wird größer)
+        view.addKeyBinding(KeyStroke.getKeyStroke("D"), "moveRight", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                movePlayer(1, 0);
+            }
+        });
         
         // Taste "E" für den Dialog
         view.addKeyBinding(KeyStroke.getKeyStroke("E"), "toggleDialog", new AbstractAction() {
@@ -62,4 +96,18 @@ public class GameController {
             }
         });
     }
+    
+
+
+    private void movePlayer(int deltaX, int deltaY) {
+    	
+        int newX = modelP.getPlayerPosX() + deltaX;
+        int newY = modelP.getPlayerPosY() + deltaY;
+        
+        modelP.setPlayerPosX(newX);
+        modelP.setPlayerPosY(newY);
+
+        view.updateCoordinates(newX, newY);
+    }
+    
 }
