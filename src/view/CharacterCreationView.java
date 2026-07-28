@@ -16,10 +16,14 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 
 import controller.AnimationController;
+import controller.GameController;
 import model.ClassModel;
 import model.ClassRepository;
+import model.GameStateModel;
+import model.PlayerModel;
 
 import java.awt.Font;
 
@@ -137,7 +141,20 @@ public class CharacterCreationView extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) { // Button für Erstellen damit das spiel aufgeht
-				new GameView();
+				long currentTime = System.currentTimeMillis();
+				GameStateModel testModel = new GameStateModel(
+                        "TestHero",                     // Spielername
+                        new java.sql.Date(currentTime), // Speicherzeit
+                        new PlayerModel(0, 0, nameField.getText(), 100, 3, 3, 1, 1, classList.getSelectedValue()),                           // PlayerModel (noch nicht vorhanden)
+                        35,                             // Start-Score (nutzen wir hier für XP)
+                        150,                            // Start X-Koordinate
+                        250,                            // Start Y-Koordinate
+                        null                            // Hashmap (noch nicht vorhanden)
+                );
+                SwingUtilities.invokeLater(() -> {
+                    GameView gameView = new GameView();
+                    GameController controller = new GameController(gameView, testModel);
+                });
 				dispose();
 			}
 		});

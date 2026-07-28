@@ -12,6 +12,7 @@ public class PlayerModel implements Serializable {
 	//Postition des Spielers
 	private int playerPosX;
 	private int playerPosY;
+	private String name;
 	
 	//Leben und Level
 	private int maxHealth;
@@ -33,25 +34,25 @@ public class PlayerModel implements Serializable {
     private List<ItemModel> inventoryList;
     
     
-    // Konstruktor
-    public PlayerModel() {
-        this.playerPosX = 0;
-        this.playerPosY = 0;
-        
-        this.maxHealth = 100;
-        this.currentHealth = 100; 
-        this.currentLvl = 1;      
-        this.currentXp = 0;      
-        
-        this.strength = 10;
-        this.endurance = 10;
-        this.baseDmg = 5;
-        this.baseSpeed = 1;
-        this.baseArmor = 0;
-        
-        // Wir initialisieren eine leere Liste (einen leeren Rucksack)
-        this.inventoryList = new ArrayList<>();
-    }
+    // Konstruktor (Start Charakter)
+    public PlayerModel(int playerPosX, int playerPosY, String name, int maxHealth, int strength, int endurance, 
+    		int baseDmg, int baseArmor, ClassModel playerClass) {
+		super();
+		this.playerPosX = playerPosX;
+		this.playerPosY = playerPosY;
+		this.name = name;
+		this.maxHealth = maxHealth;
+		this.currentHealth = maxHealth;
+		this.currentLvl = 1;
+		this.currentXp = 0;
+		this.strength = strength + playerClass.getBonusStrength();
+		this.endurance = endurance + playerClass.getBonusEndurance();
+		this.baseDmg = baseDmg + playerClass.getBonusDamage();
+		this.baseSpeed = 1;
+		this.baseArmor = baseArmor;
+		this.playerClass = playerClass;
+		this.inventoryList = new ArrayList<ItemModel>();
+	}
     
  // Getter und Setter
 
@@ -59,7 +60,8 @@ public class PlayerModel implements Serializable {
     public int getPlayerPosX() {
         return this.playerPosX;
     }
-    public void setPlayerPosX(int playerPosX) {
+   
+	public void setPlayerPosX(int playerPosX) {
         this.playerPosX = playerPosX;
     }
 
@@ -167,4 +169,15 @@ public class PlayerModel implements Serializable {
     public void removeItemFromInventory(ItemModel item) {
         this.inventoryList.remove(item);
     }
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public void setInventoryList(List<ItemModel> inventoryList) {
+		this.inventoryList = inventoryList;
+	}
+    
+    
 }
