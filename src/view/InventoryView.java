@@ -23,12 +23,13 @@ public class InventoryView extends JFrame {
 
 	public InventoryView() {
 
-		setTitle("Inventar");
-		setSize(800, 400);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setLocationRelativeTo(null);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setResizable(false);
-
+		setSize(800, 400);
+		setTitle("Inventar");
+		setUndecorated(true);
+		setVisible(true);
+	
 		JPanel inventoryPanel = new JPanel();
 		inventoryPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 		inventoryPanel.setLayout(new GridLayout(ROWS, COLS, 10, 10));
@@ -61,8 +62,8 @@ public class InventoryView extends JFrame {
 				slot.setForeground(new Color(0, 0, 0));
 				slot.setFont(AnimationController.loadDungeonFont(24f));
 
-				Color normal = slot.getBackground();
 				Color hover = new Color(237, 158, 12);
+				Color normal = slot.getBackground();
 
 				// Hover-Effect
 				slot.addMouseListener(new MouseAdapter() {
