@@ -1,5 +1,6 @@
 package view;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -10,16 +11,20 @@ import java.util.EnumMap;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 public class GamePanel extends JPanel {
 	// map & tile size
 	private static final int TILE_SIZE = 64;
-	private static final int MAP_ROWS = 32;
-	private static final int MAP_COLS = 42;
+	private static final int MAP_ROWS = 33;
+	private static final int MAP_COLS = 43;
 	
 	// all existing tiles & textures
 	private TileType[][] tiles;
+	private JLabel[][] worldLabels = new JLabel[MAP_ROWS][MAP_COLS];
+	
+	private int playerRow, playerCol;
 	
 	private final Map<TileType, BufferedImage> textures =
 			new EnumMap<>(TileType.class);
@@ -48,6 +53,7 @@ public class GamePanel extends JPanel {
 	
 	// constructor
 	public GamePanel() {
+//		worldLabels[playerRow][playerCol].add(playerLabel, BorderLayout.CENTER);
 		setBackground(Color.BLACK);
 		setOpaque(true);
 		
@@ -133,4 +139,28 @@ public class GamePanel extends JPanel {
 	        g.fillRect(x, y, TILE_SIZE, TILE_SIZE);
 	    }
 	}
+	
+	// TODO:
+//	private void fillTilePanelRandomly() {
+//		for (int row = 0; row < ROWS; row++) {
+//			for (int col = 0; col < COLS; col++) {
+//				TileModel tile = getRandomTile(col, row);
+//
+//				world[row][col] = tile;
+//				tile.setPosX(col);
+//				tile.setPosY(row);
+//
+//				JLabel singleTileLbl = new JLabel();
+//				singleTileLbl.setPreferredSize(new Dimension(tileSize, tileSize));
+//				singleTileLbl.setLayout(new BorderLayout());
+//
+//				ImageIcon icon = getScaledIcon(tile.getTexturePath(), tileSize, false);
+//				singleTileLbl.setIcon(icon);
+//				singleTileLbl.setHorizontalAlignment(SwingConstants.CENTER);
+//				singleTileLbl.setVerticalAlignment(SwingConstants.CENTER);
+//
+//				worldLabels[row][col] = singleTileLbl;
+//				tilePnl.add(singleTileLbl);
+//			}
+//		}
 }
