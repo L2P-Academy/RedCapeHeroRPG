@@ -44,6 +44,7 @@ public class GameController {
         view.addKeyBinding(KeyStroke.getKeyStroke("W"), "moveUp", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
+            	view.updatePlayerDirection("W");
                 movePlayer(0, 1);
             }
         });
@@ -52,6 +53,7 @@ public class GameController {
         view.addKeyBinding(KeyStroke.getKeyStroke("S"), "moveDown", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
+            	view.updatePlayerDirection("S");
                 movePlayer(0, -1);
             }
         });
@@ -60,6 +62,7 @@ public class GameController {
         view.addKeyBinding(KeyStroke.getKeyStroke("A"), "moveLeft", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
+            	view.updatePlayerDirection("A");
                 movePlayer(-1, 0);
             }
         });
@@ -68,6 +71,7 @@ public class GameController {
         view.addKeyBinding(KeyStroke.getKeyStroke("D"), "moveRight", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
+            	view.updatePlayerDirection("D");
                 movePlayer(1, 0);
             }
         });
