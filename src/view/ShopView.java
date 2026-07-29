@@ -7,14 +7,15 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.List;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import model.ItemModel;
 import model.ItemRepository;
-import model.WeaponModel;
 import model.PotionModel;
+import model.WeaponModel;
+
 import controller.AnimationController;
 
 // Class
@@ -27,6 +28,7 @@ public class ShopView extends JFrame {
 	private static final Color BG_COLOR = new Color(0, 0, 0);
 	private static final Color TEXT_COLOR = new Color(189, 2, 0);
 	private static final Color HOVER_COLOR = new Color(237, 158, 12);
+	private static final Color VALUE_COLOR = new Color(255, 215, 0);
 
 	public ShopView() {
 		this(null);
@@ -43,7 +45,7 @@ public class ShopView extends JFrame {
 
 		// Überschrift
 		JLabel title = new JLabel("SHOP", SwingConstants.CENTER);
-		title.setFont(AnimationController.loadDungeonFont(48f));
+		title.setFont(AnimationController.loadDungeonFont(52f));
 		title.setForeground(TEXT_COLOR);
 		title.setHorizontalAlignment(SwingConstants.CENTER);
 		title.setBorder(BorderFactory.createEmptyBorder(15, 0, 15, 0));
@@ -62,6 +64,19 @@ public class ShopView extends JFrame {
 		scrollPane.getViewport().setBackground(BG_COLOR);
 
 		add(scrollPane, BorderLayout.CENTER);
+
+		JButton closeButton = new JButton("Schließen");
+		AnimationController.beautifyButton(closeButton);
+		closeButton.setFont(AnimationController.loadDungeonFont(36f));
+		closeButton.setFocusPainted(false);
+		closeButton.addActionListener(e -> dispose());
+
+		JPanel bottomPanel = new JPanel();
+		bottomPanel.setBackground(BG_COLOR);
+		bottomPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
+		bottomPanel.add(closeButton);
+
+		add(bottomPanel, BorderLayout.SOUTH);
 
 		positionNextToParent(parent);
 
@@ -114,7 +129,8 @@ public class ShopView extends JFrame {
 		for (Map.Entry<String, List<ItemModel>> entry : categories.entrySet()) {
 
 			JLabel categoryLabel = new JLabel(entry.getKey());
-			categoryLabel.setFont(AnimationController.loadDungeonFont(32f));
+			Font categoryFont = AnimationController.loadDungeonFont(38f);
+			categoryLabel.setFont(categoryFont.deriveFont(Font.BOLD));
 			categoryLabel.setForeground(TEXT_COLOR);
 			categoryLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 			panel.add(categoryLabel);
@@ -138,23 +154,45 @@ public class ShopView extends JFrame {
 		row.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		row.setMaximumSize(new Dimension(Integer.MAX_VALUE, row.getPreferredSize().height));
 
+		JLabel iconLabel = new JLabel();
+		iconLabel.setPreferredSize(new Dimension(64, 64));
+		java.net.URL iconUrl = getClass().getResource("/" + item.getTexturePath());
+		if (iconUrl != null) {
+			ImageIcon icon = new ImageIcon(iconUrl);
+			Image scaled = icon.getImage().getScaledInstance(64, 64, Image.SCALE_SMOOTH);
+			iconLabel.setIcon(new ImageIcon(scaled));
+		}
+		row.add(iconLabel, BorderLayout.WEST);
+
 		Font textFont = AnimationController.loadDungeonFont(32f);
 
-		JLabel nameLabel = new JLabel("Item: " + item.getName());
+		String valueColorHex = String.format("#%02x%02x%02x", VALUE_COLOR.getRed(), VALUE_COLOR.getGreen(),
+				VALUE_COLOR.getBlue());
+
+		JLabel nameLabel = new JLabel("<html><u><span style='font-size:36pt;color:" + valueColorHex
+				+ ";'>Item:</span></u> " + item.getName() + "</html>");
 		nameLabel.setFont(textFont);
 		nameLabel.setForeground(TEXT_COLOR);
 
-		JLabel descriptionLabel = new JLabel("Beschreibung: " + item.getDescription());
+		JLabel descriptionLabel = new JLabel("<html><u><span style='font-size:36pt;color:" + valueColorHex
+				+ ";'>Beschreibung:</span></u> " + item.getDescription() + "</html>");
 		descriptionLabel.setFont(textFont);
 		descriptionLabel.setForeground(TEXT_COLOR);
 
-		JLabel valueLabel = new JLabel("Wert: " + item.getValue());
+		JLabel valueLabel = new JLabel("<html><u><span style='font-size:36pt;color:" + valueColorHex
+				+ ";'>Wert:</span></u> " + item.getValue() + "</html>");
 		valueLabel.setFont(textFont);
 		valueLabel.setForeground(TEXT_COLOR);
+
+		JLabel rarityLabel = new JLabel("<html><u><span style='font-size:36pt;color:" + valueColorHex
+				+ ";'>Benötigtes Level:</span></u> " + item.getRarityLvl() + "</html>");
+		rarityLabel.setFont(textFont);
+		rarityLabel.setForeground(TEXT_COLOR);
 
 		row.add(nameLabel);
 		row.add(descriptionLabel);
 		row.add(valueLabel);
+		row.add(rarityLabel);
 
 		row.setMaximumSize(new Dimension(Integer.MAX_VALUE, row.getPreferredSize().height));
 
@@ -166,11 +204,13 @@ public class ShopView extends JFrame {
 			@Override
 			public void mouseEntered(MouseEvent e) {
 				row.setBackground(HOVER_COLOR);
+				row.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 			}
 
 			@Override
 			public void mouseExited(MouseEvent e) {
 				row.setBackground(normal);
+				row.setCursor(Cursor.getDefaultCursor());
 			}
 
 			@Override
@@ -178,6 +218,7 @@ public class ShopView extends JFrame {
 				System.out.println("Gewähltes Item: " + item.getName());
 				System.out.println("Beschreibung: " + item.getDescription());
 				System.out.println("Wert: " + item.getValue());
+				System.out.println("Benötigtes Level: " + item.getRarityLvl());
 				dispose();
 			}
 		});
@@ -185,7 +226,7 @@ public class ShopView extends JFrame {
 		return row;
 	}
 
-//	public static void main(String[] args) {
-//		SwingUtilities.invokeLater(ShopView::new);
-//	}
+	public static void main(String[] args) {
+		SwingUtilities.invokeLater(ShopView::new);
+	}
 }

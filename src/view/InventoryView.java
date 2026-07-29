@@ -37,6 +37,8 @@ public class InventoryView extends JFrame {
 		setSize(800, 400);
 		setTitle("Inventar");
 		setUndecorated(true);
+		setBackground(new Color(0, 0, 0, 0));
+		getContentPane().setBackground(new Color(0, 0, 0, 0));
 
 		if (parent != null) {
 			Rectangle parentBounds = parent.getBounds();
@@ -49,6 +51,7 @@ public class InventoryView extends JFrame {
 
 		JPanel inventoryPanel = new JPanel();
 		inventoryPanel.setLayout(new GridLayout(ROWS, COLS, 10, 10));
+		inventoryPanel.setOpaque(false);
 
 		// Überschrift "Inventar"
 		Font titleFont = AnimationController.loadDungeonFont(32f);
@@ -61,8 +64,26 @@ public class InventoryView extends JFrame {
 		createSlots(inventoryPanel);
 
 		add(inventoryPanel);
+		add(createCloseButtonPanel(), BorderLayout.SOUTH);
 
 		setVisible(true);
+	}
+
+	private JPanel createCloseButtonPanel() {
+
+		JPanel closePanel = new JPanel();
+		closePanel.setOpaque(false);
+		closePanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 15, 0));
+
+		JButton closeButton = new JButton("Schließen");
+		AnimationController.beautifyButton(closeButton);
+		closeButton.setFont(AnimationController.loadDungeonFont(28f));
+		closeButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		closeButton.addActionListener(e -> dispose());
+
+		closePanel.add(closeButton);
+
+		return closePanel;
 	}
 
 	private void createSlots(JPanel panel) {
@@ -71,6 +92,9 @@ public class InventoryView extends JFrame {
 		List<ItemModel> items = itemRepository.getItems();
 
 		int index = 0;
+
+		Color normalBorderColor = new Color(189, 2, 0);
+		Color hoverBorderColor = new Color(237, 158, 12);
 
 		for (int row = 0; row < ROWS; row++) {
 			for (int col = 0; col < COLS; col++) {
@@ -85,6 +109,15 @@ public class InventoryView extends JFrame {
 				slot.setForeground(new Color(189, 2, 0));
 				slot.setFont(AnimationController.loadDungeonFont(24f));
 
+				Dimension slotSize = new Dimension(ICON_SIZE, ICON_SIZE);
+				slot.setPreferredSize(slotSize);
+				slot.setMinimumSize(slotSize);
+				slot.setMaximumSize(slotSize);
+
+				LineBorder normalBorder = new LineBorder(normalBorderColor, 2);
+				LineBorder hoverBorder = new LineBorder(hoverBorderColor, 2);
+				slot.setBorder(normalBorder);
+
 				if (currentItem != null) {
 					ImageIcon icon = loadItemIcon(currentItem.getTexturePath());
 					if (icon != null) {
@@ -96,20 +129,19 @@ public class InventoryView extends JFrame {
 					}
 				}
 
-				Color hover = new Color(237, 158, 12);
-				Color normal = slot.getBackground();
-
 				// Hover-Effect
 				slot.addMouseListener(new MouseAdapter() {
 
 					@Override
 					public void mouseEntered(MouseEvent e) {
-						slot.setBackground(hover);
+						slot.setBorder(hoverBorder);
+						slot.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 					}
 
 					@Override
 					public void mouseExited(MouseEvent e) {
-						slot.setBackground(normal);
+						slot.setBorder(normalBorder);
+						slot.setCursor(Cursor.getDefaultCursor());
 					}
 				});
 
@@ -149,5 +181,9 @@ public class InventoryView extends JFrame {
 		ImageIcon rawIcon = new ImageIcon(url);
 		Image scaledImage = rawIcon.getImage().getScaledInstance(ICON_SIZE, ICON_SIZE, Image.SCALE_SMOOTH);
 		return new ImageIcon(scaledImage);
+	}
+
+	public static void main(String[] args) {
+		SwingUtilities.invokeLater(InventoryView::new);
 	}
 }
