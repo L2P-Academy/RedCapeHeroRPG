@@ -225,8 +225,4 @@ public class ShopView extends JFrame {
 
 		return row;
 	}
-
-	public static void main(String[] args) {
-		SwingUtilities.invokeLater(ShopView::new);
-	}
 }

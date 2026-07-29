@@ -182,8 +182,4 @@ public class InventoryView extends JFrame {
 		Image scaledImage = rawIcon.getImage().getScaledInstance(ICON_SIZE, ICON_SIZE, Image.SCALE_SMOOTH);
 		return new ImageIcon(scaledImage);
 	}
-
-	public static void main(String[] args) {
-		SwingUtilities.invokeLater(InventoryView::new);
-	}
 }
