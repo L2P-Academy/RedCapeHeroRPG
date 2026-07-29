@@ -63,7 +63,7 @@ public class GameController {
             @Override
             public void actionPerformed(ActionEvent e) {
             	view.updatePlayerDirection("W");
-                movePlayer(0, 1);
+                movePlayer(0, -1);
             }
         });
 
@@ -72,7 +72,7 @@ public class GameController {
             @Override
             public void actionPerformed(ActionEvent e) {
             	view.updatePlayerDirection("S");
-                movePlayer(0, -1);
+                movePlayer(0, 1);
             }
         });
 
@@ -201,7 +201,7 @@ public class GameController {
 					public void actionPerformed(ActionEvent e) {
 						SoundController.playBtnSound();
 						pauseDialog.dispose();
-						view.dispose();
+						System.exit(0);;
 					}
 				});
         		// TODO: fix this Label (not showing up)

@@ -104,8 +104,8 @@ public class MenuView extends JFrame {
                 );
                 
                 PlayerModel testPlayer = new PlayerModel(
-                        150,          // playerPosX
-                        250,          // playerPosY
+                        2,          // playerPosX
+                        2,          // playerPosY
                         "TestHero",   // name
                         100,          // maxHealth
                         10,           // strength
