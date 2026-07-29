@@ -14,6 +14,8 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
+import javax.swing.ImageIcon;
+import java.net.URL;
 
 import controller.AnimationController;
 
@@ -22,7 +24,8 @@ public class GameView extends JFrame {
 
     private JPanel gameField, dialogBoxPanel, xpHudPanel, lifeHudPanel, abilityHudPanel, miniMap;
     private GamePanel gamePanel;
-    private JLabel timeStamp, coordinates, npcPicture ;
+    private JLabel timeStamp, coordinates, npcPicture, playerSpriteLabel ;
+    private ImageIcon iconUp, iconDown, iconLeft, iconRight;
     private JProgressBar healthPoints, abilityPoints, xperiencePoints;
     private boolean isDialogActive = false;
 
@@ -55,6 +58,25 @@ public class GameView extends JFrame {
         gameField.setBackground(Color.BLACK);
         
         gamePanel = new GamePanel();
+        
+        gamePanel.setLayout(null);
+        URL urlUp = getClass().getResource("/playeranimation/player_idle_up.gif");
+        URL urlDown = getClass().getResource("/playeranimation/player_idle_down.gif");
+        URL urlLeft = getClass().getResource("/playeranimation/player_idle_left.gif");
+        URL urlRight = getClass().getResource("/playeranimation/player_idle_right.gif");
+        
+        if (urlUp != null && urlDown != null && urlLeft != null && urlRight != null) {
+            iconUp = new ImageIcon(urlUp);
+            iconDown = new ImageIcon(urlDown);
+            iconLeft = new ImageIcon(urlLeft);
+            iconRight = new ImageIcon(urlRight);            
+         
+            playerSpriteLabel = new JLabel(iconDown);
+            playerSpriteLabel.setSize(64, 64);
+            gamePanel.add(playerSpriteLabel);
+        } else {
+            System.err.println("Fehler: Mindestens ein Spieler-GIF wurde nicht gefunden!");
+        } 
         
 	        timeStamp = new JLabel("00:00:00"); // Ist nur Testweise erstmal vorhanden
 	        timeStamp.setForeground(Color.WHITE);
@@ -240,4 +262,24 @@ public class GameView extends JFrame {
         gameField.getInputMap(JPanel.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, actionName);
         gameField.getActionMap().put(actionName, action);
     }
+    
+ // Methode, um das GIF je nach Richtung zu tauschen
+    public void updatePlayerDirection(String direction) {
+        if (playerSpriteLabel == null) return;
+        switch (direction) {
+            case "W":
+                if (playerSpriteLabel.getIcon() != iconUp) playerSpriteLabel.setIcon(iconUp);
+                break;
+            case "S":
+                if (playerSpriteLabel.getIcon() != iconDown) playerSpriteLabel.setIcon(iconDown);
+                break;
+            case "A":
+                if (playerSpriteLabel.getIcon() != iconLeft) playerSpriteLabel.setIcon(iconLeft);
+                break;
+            case "D":
+                if (playerSpriteLabel.getIcon() != iconRight) playerSpriteLabel.setIcon(iconRight);
+                break;
+        }
+    }
+    
 }
