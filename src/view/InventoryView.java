@@ -52,7 +52,7 @@ public class InventoryView extends JFrame {
 
 		// Überschrift "Inventar"
 		Font titleFont = AnimationController.loadDungeonFont(32f);
-		TitledBorder titledBorder = BorderFactory.createTitledBorder(new LineBorder(Color.RED, 3), "Inventar",
+		TitledBorder titledBorder = BorderFactory.createTitledBorder(new LineBorder(Color.RED, 3), "INVENTAR",
 				TitledBorder.CENTER, TitledBorder.TOP, titleFont, new Color(189, 2, 0));
 
 		inventoryPanel.setBorder(
