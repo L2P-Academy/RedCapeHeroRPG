@@ -7,22 +7,41 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.EnumMap;
 import java.util.Map;
 
+import java.util.Random;
+
 import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 
 public class GamePanel extends JPanel {
 	// map & tile size
 	private static final int TILE_SIZE = 64;
-	private static final int MAP_ROWS = 33;
-	private static final int MAP_COLS = 43;
+	private static final int MAP_ROWS = 1000;
+	private static final int MAP_COLS = 1500;
+	
+	// tile probability for procedural generation
+	private static final double DIRT_PROB = 0.01;
+	private static final double TREE_PROB = 0.01;
+	private static final double FLOWERS_PROB = 0.05;
+	private static final double STONE_PROB = 0.02;
+	private static final double CORRUPTED_GRASS_PROB = 0.02;
+	
+	private static final long WORLD_SEED = 42L;
+	
+	// player movement/sprites
+    private ImageIcon iconUp, iconDown, iconLeft, iconRight;
 	
 	// all existing tiles & textures
 	private TileType[][] tiles;
-	private JLabel[][] worldLabels = new JLabel[MAP_ROWS][MAP_COLS];
+	
+	private CameraView camera;
+	private JLabel playerSpriteLabel;
 	
 	private int playerRow, playerCol;
 	
@@ -32,7 +51,6 @@ public class GamePanel extends JPanel {
 	// paths for all tiles
 	public enum TileType {
 		GRASS("/world/grass.png"), 
-		BIG_GRASS("/world/big_grass.png"), 
 		CORRUPTED_GRASS("/world/corrupted_grass.png"), 
 		MOWED_GRASS("/world/mowed_grass.png"), 
 		DIRT("/world/dirt.png"), 
@@ -53,15 +71,109 @@ public class GamePanel extends JPanel {
 	
 	// constructor
 	public GamePanel() {
-//		worldLabels[playerRow][playerCol].add(playerLabel, BorderLayout.CENTER);
+		setLayout(null);
 		setBackground(Color.BLACK);
 		setOpaque(true);
 		
+		loadPlayerSprites();		
 		loadTextures();
-		createTestMap();
+		createProceduralMap();
 		
-		setPreferredSize(new Dimension(MAP_COLS * TILE_SIZE, MAP_ROWS * TILE_SIZE));
+	    this.camera = new CameraView(
+	            MAP_COLS * TILE_SIZE,
+	            MAP_ROWS * TILE_SIZE
+	    );
+
+	    setPreferredSize(new Dimension(
+	            MAP_COLS * TILE_SIZE,
+	            MAP_ROWS * TILE_SIZE
+	    ));
 	}
+	
+	private void loadPlayerSprites() {
+		URL urlUp = getClass().getResource("/playeranimation/player_idle_up.gif");
+        URL urlDown = getClass().getResource("/playeranimation/player_idle_down.gif");
+        URL urlLeft = getClass().getResource("/playeranimation/player_idle_left.gif");
+        URL urlRight = getClass().getResource("/playeranimation/player_idle_right.gif");
+        
+        if (urlUp != null && urlDown != null && urlLeft != null && urlRight != null) {
+            iconUp = new ImageIcon(urlUp);
+            iconDown = new ImageIcon(urlDown);
+            iconLeft = new ImageIcon(urlLeft);
+            iconRight = new ImageIcon(urlRight);            
+         
+            playerSpriteLabel = new JLabel(iconDown);
+            playerSpriteLabel.setBounds(
+            		0, 
+            		0, 
+            		TILE_SIZE, 
+            		TILE_SIZE
+            );            
+            
+            add(playerSpriteLabel);
+        } else {
+            System.err.println("Fehler: Mindestens ein Spieler-GIF wurde nicht gefunden!");
+        } 
+
+	}
+	// set player position by tile
+	public void setPlayerTilePosition(int playerCol, int playerRow) {
+	    this.playerCol = playerCol;
+	    this.playerRow = playerRow;
+
+	    int playerCenterWorldX =
+	            playerCol * TILE_SIZE + TILE_SIZE / 2;
+
+	    int playerCenterWorldY =
+	            playerRow * TILE_SIZE + TILE_SIZE / 2;
+
+	    camera.centerOn(
+	            playerCenterWorldX,
+	            playerCenterWorldY,
+	            getWidth(),
+	            getHeight()
+	    );
+
+	    updatePlayerScreenPosition();
+	    repaint();
+	}
+	
+	private void updatePlayerScreenPosition() {
+	    if (playerSpriteLabel == null || camera == null) {
+	        return;
+	    }
+
+	    int playerWorldX = playerCol * TILE_SIZE;
+	    int playerWorldY = playerRow * TILE_SIZE;
+
+	    int playerScreenX = playerWorldX - camera.getX();
+	    int playerScreenY = playerWorldY - camera.getY();
+
+	    playerSpriteLabel.setLocation(
+	            playerScreenX,
+	            playerScreenY
+	    );
+	}
+	
+	
+	// Methode, um das GIF je nach Richtung zu tauschen
+    public void updatePlayerDirection(String direction) {
+        if (playerSpriteLabel == null) return;
+        switch (direction) {
+            case "W":
+                if (playerSpriteLabel.getIcon() != iconUp) playerSpriteLabel.setIcon(iconUp);
+                break;
+            case "S":
+                if (playerSpriteLabel.getIcon() != iconDown) playerSpriteLabel.setIcon(iconDown);
+                break;
+            case "A":
+                if (playerSpriteLabel.getIcon() != iconLeft) playerSpriteLabel.setIcon(iconLeft);
+                break;
+            case "D":
+                if (playerSpriteLabel.getIcon() != iconRight) playerSpriteLabel.setIcon(iconRight);
+                break;
+        }
+    }
 	
 	private void loadTextures() {
 		for (TileType tileType : TileType.values()) {
@@ -100,17 +212,199 @@ public class GamePanel extends JPanel {
 		}
 
 	}
+	
+	private void createProceduralMap() {
+	    tiles = new TileType[MAP_ROWS][MAP_COLS];
+
+	    Random random = new Random(WORLD_SEED);
+
+	    for (int row = 0; row < MAP_ROWS; row++) {
+	        for (int col = 0; col < MAP_COLS; col++) {
+
+	            if (row > 0 && col > 0 && random.nextDouble() < 0.55) {
+
+	                if (random.nextBoolean()) {
+	                    tiles[row][col] = tiles[row - 1][col];
+	                } else {
+	                    tiles[row][col] = tiles[row][col - 1];
+	                }
+
+	            } else {
+	                tiles[row][col] = getRandomTile(random);
+	            }
+	        }
+	    }
+
+	    createFixedStartArea();
+	}
+	
+	private void createFixedStartArea() {
+	    int startCol = MAP_COLS / 2;
+	    int startRow = MAP_ROWS / 2;
+
+	    /*
+	     * 9 × 7 Tiles große gemähte Startfläche.
+	     */
+	    for (int row = startRow - 3; row <= startRow + 3; row++) {
+	        for (int col = startCol - 4; col <= startCol + 4; col++) {
+
+	            if (isInsideMap(col, row)) {
+	                tiles[row][col] = TileType.MOWED_GRASS;
+	            }
+	        }
+	    }
+
+	    /*
+	     * Ein Weg führt vom Startgebiet nach rechts.
+	     */
+	    for (int col = startCol; col < MAP_COLS; col++) {
+	        setTileIfInside(col, startRow, TileType.DIRT);
+	        setTileIfInside(col, startRow + 1, TileType.DIRT);
+	    }
+
+	    /*
+	     * Kleine Dekorationen im Startbereich.
+	     */
+	    setTileIfInside(
+	            startCol - 3,
+	            startRow - 2,
+	            TileType.FLOWERS
+	    );
+
+	    setTileIfInside(
+	            startCol + 3,
+	            startRow - 2,
+	            TileType.FLOWERS
+	    );
+
+	    setTileIfInside(
+	            startCol - 4,
+	            startRow,
+	            TileType.TREE
+	    );
+
+	    setTileIfInside(
+	            startCol + 4,
+	            startRow - 2,
+	            TileType.TREE
+	    );
+
+	    setTileIfInside(
+	            startCol - 2,
+	            startRow + 2,
+	            TileType.STONE
+	    );
+	}
+	
+	private boolean isInsideMap(int col, int row) {
+	    return col >= 0
+	            && col < MAP_COLS
+	            && row >= 0
+	            && row < MAP_ROWS;
+	}
+
+	private void setTileIfInside(
+	        int col,
+	        int row,
+	        TileType tileType) {
+
+	    if (isInsideMap(col, row)) {
+	        tiles[row][col] = tileType;
+	    }
+	}
+	
+	private TileType getRandomTile(Random random) {
+	    double value = random.nextDouble();
+	    double cumulativeChance = 0.0;
+
+	    cumulativeChance += TREE_PROB;
+
+	    if (value < cumulativeChance) {
+	        return TileType.TREE;
+	    }
+
+	    cumulativeChance += STONE_PROB;
+
+	    if (value < cumulativeChance) {
+	        return TileType.STONE;
+	    }
+
+	    cumulativeChance += DIRT_PROB;
+
+	    if (value < cumulativeChance) {
+	        return TileType.DIRT;
+	    }
+
+	    cumulativeChance += FLOWERS_PROB;
+
+	    if (value < cumulativeChance) {
+	        return TileType.FLOWERS;
+	    }
+
+	    cumulativeChance += CORRUPTED_GRASS_PROB;
+
+	    if (value < cumulativeChance) {
+	        return TileType.CORRUPTED_GRASS;
+	    }
+
+	    /*
+	     * Falls keine der Wahrscheinlichkeiten zutrifft,
+	     * wird normales Gras verwendet.
+	     */
+	    return TileType.GRASS;
+	}
+	
+	public void moveCamera(int deltaX, int deltaY) {
+	    camera.move(
+	            deltaX,
+	            deltaY,
+	            getWidth(),
+	            getHeight()
+	    );
+
+	    updatePlayerScreenPosition();
+	    repaint();
+	}
+	
+	public void centerCameraOn(int worldX, int worldY) {
+
+	    camera.centerOn(
+	            worldX,
+	            worldY,
+	            getWidth(),
+	            getHeight()
+	    );
+
+	    updatePlayerScreenPosition();
+	    repaint();
+	}
 
 	// rendering
 	@Override
 	protected void paintComponent(Graphics g) {
-		super.paintComponent(g);
-		
-		for (int row = 0; row < tiles.length; row++) {
-			for (int col = 0; col < tiles[row].length; col++) {
-				drawTile(g, tiles[row][col], col, row);
-			}
-		}
+	    super.paintComponent(g);
+
+	    if (tiles == null || camera == null) {
+	        return;
+	    }
+
+	    int startCol = camera.getX() / TILE_SIZE;
+	    int startRow = camera.getY() / TILE_SIZE;
+
+	    int endCol = startCol + getWidth() / TILE_SIZE + 2;
+	    int endRow = startRow + getHeight() / TILE_SIZE + 2;
+
+	    startCol = Math.max(0, startCol);
+	    startRow = Math.max(0, startRow);
+
+	    endCol = Math.min(MAP_COLS, endCol);
+	    endRow = Math.min(MAP_ROWS, endRow);
+
+	    for (int row = startRow; row < endRow; row++) {
+	        for (int col = startCol; col < endCol; col++) {
+	            drawTile(g, tiles[row][col], col, row);
+	        }
+	    }
 	}
 
 	private void drawTile(
@@ -121,46 +415,29 @@ public class GamePanel extends JPanel {
 
 	    BufferedImage texture = textures.get(tileType);
 
-	    int x = col * TILE_SIZE;
-	    int y = row * TILE_SIZE;
+	    int worldX = col * TILE_SIZE;
+	    int worldY = row * TILE_SIZE;
+
+	    int screenX = worldX - camera.getX();
+	    int screenY = worldY - camera.getY();
 
 	    if (texture != null) {
 	        g.drawImage(
 	                texture,
-	                x,
-	                y,
+	                screenX,
+	                screenY,
 	                TILE_SIZE,
 	                TILE_SIZE,
 	                null
 	        );
 	    } else {
-	        // Ersatzfarbe, falls die Textur nicht geladen wurde
 	        g.setColor(Color.GREEN);
-	        g.fillRect(x, y, TILE_SIZE, TILE_SIZE);
+	        g.fillRect(
+	                screenX,
+	                screenY,
+	                TILE_SIZE,
+	                TILE_SIZE
+	        );
 	    }
 	}
-	
-	// TODO:
-//	private void fillTilePanelRandomly() {
-//		for (int row = 0; row < ROWS; row++) {
-//			for (int col = 0; col < COLS; col++) {
-//				TileModel tile = getRandomTile(col, row);
-//
-//				world[row][col] = tile;
-//				tile.setPosX(col);
-//				tile.setPosY(row);
-//
-//				JLabel singleTileLbl = new JLabel();
-//				singleTileLbl.setPreferredSize(new Dimension(tileSize, tileSize));
-//				singleTileLbl.setLayout(new BorderLayout());
-//
-//				ImageIcon icon = getScaledIcon(tile.getTexturePath(), tileSize, false);
-//				singleTileLbl.setIcon(icon);
-//				singleTileLbl.setHorizontalAlignment(SwingConstants.CENTER);
-//				singleTileLbl.setVerticalAlignment(SwingConstants.CENTER);
-//
-//				worldLabels[row][col] = singleTileLbl;
-//				tilePnl.add(singleTileLbl);
-//			}
-//		}
 }
