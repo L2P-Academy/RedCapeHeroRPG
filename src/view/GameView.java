@@ -14,6 +14,7 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 import javax.swing.ImageIcon;
 import java.net.URL;
 
@@ -22,26 +23,43 @@ import controller.AnimationController;
 //Wenigerklassen
 public class GameView extends JFrame {
 
-    private JPanel gameField, dialogBoxPanel, xpHudPanel, lifeHudPanel, abilityHudPanel, miniMap;
-    private GamePanel gamePanel;
-    private JLabel timeStamp, coordinates, npcPicture, playerSpriteLabel ;
+    private JPanel dialogBoxPanel, xpHudPanel, lifeHudPanel, abilityHudPanel, miniMap;
+    private GamePanel gameField;
+    private JLabel coordinates, npcPicture, playerSpriteLabel;
+    public JLabel timeStamp;
     private ImageIcon iconUp, iconDown, iconLeft, iconRight;
     private JProgressBar healthPoints, abilityPoints, xperiencePoints;
     private boolean isDialogActive = false;
+    private Timer gameTimer;
+    private int elapsedSeconds;
 
     public GameView() {
         initWindow();
         initComponents();
-        setDialogActive(isDialogActive);        
+        startGameTimer();
+        setDialogActive(isDialogActive);
     }
     
     
     private void initWindow() {
+    	setUndecorated(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         //setAlwaysOnTop(true); // Vorrübergehend auskommenbtiert umd das Inventar zu testen
         setSize(1920, 1080);
     }
+    
+    // TODO:
+	public void startGameTimer() {
+		gameTimer = new Timer(1000, e -> {
+			elapsedSeconds++;
+			int hours = elapsedSeconds / 3600;
+			int minutes = elapsedSeconds / 60;
+			int seconds = elapsedSeconds % 60;
+			timeStamp.setText(String.format("%02d:%02d:%02d",hours, minutes, seconds));
+		});
+		gameTimer.start();
+	}
 
     public void setDialogActive(boolean isActive) {
         if (dialogBoxPanel != null) {
@@ -54,12 +72,9 @@ public class GameView extends JFrame {
     //Setzt alles zusammen zu einem HUD
     private void initComponents() {
         Font gameFont = AnimationController.loadDungeonFont(42f);
-        gameField = new JPanel(new BorderLayout());
-        gameField.setBackground(Color.BLACK);
-        
-        gamePanel = new GamePanel();
-        
-        gamePanel.setLayout(null);
+        gameField = new GamePanel();
+        gameField.setLayout(new BorderLayout());
+      
         URL urlUp = getClass().getResource("/playeranimation/player_idle_up.gif");
         URL urlDown = getClass().getResource("/playeranimation/player_idle_down.gif");
         URL urlLeft = getClass().getResource("/playeranimation/player_idle_left.gif");
@@ -73,7 +88,7 @@ public class GameView extends JFrame {
          
             playerSpriteLabel = new JLabel(iconDown);
             playerSpriteLabel.setSize(64, 64);
-            gamePanel.add(playerSpriteLabel);
+            gameField.add(playerSpriteLabel);
         } else {
             System.err.println("Fehler: Mindestens ein Spieler-GIF wurde nicht gefunden!");
         } 
@@ -140,7 +155,6 @@ public class GameView extends JFrame {
 
         // Füge alles dem Spielfeld hinzu
         gameField.add(topContainer, BorderLayout.NORTH);
-        gameField.add(gamePanel, BorderLayout.CENTER);
         gameField.add(bottomContainer, BorderLayout.SOUTH);
 
         add(gameField, BorderLayout.CENTER);
