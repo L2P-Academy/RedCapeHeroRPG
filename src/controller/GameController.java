@@ -21,6 +21,7 @@ import javax.swing.Timer;
 import model.GameStateModel;
 import model.PlayerModel;
 import view.BackGroundPanel;
+import view.GamePanel;
 import view.GameView;
 import view.InventoryView;
 import view.MenuView;
@@ -29,6 +30,7 @@ import view.SettingsView;
 public class GameController {
 
     private GameView view;
+    private GamePanel gamePanel;
     private GameStateModel modelG;   
     private	PlayerModel modelP;
     private InventoryView inventoryView; // Das Inventar-Fenster
@@ -40,6 +42,7 @@ public class GameController {
     // Wir bleiben beim gewohnten 2-Parameter-Konstruktor!
     public GameController(GameView view, GameStateModel modelG) {
         this.view = view;
+        this.gamePanel = view.getGameField();
         this.modelG = modelG; 
         this.modelP = modelG.getPlayerModel();
         
@@ -51,9 +54,16 @@ public class GameController {
     }
     
     private void initGame() {
+    	int playerX = modelP.getPlayerPosX();
+    	int playerY = modelP.getPlayerPosY();
+    	
         view.updateCoordinates(modelP.getPlayerPosX(), modelP.getPlayerPosY());
         view.updateXP(modelP.getCurrentXp());
         view.setDialogActive(isDialogActive);
+        
+        javax.swing.SwingUtilities.invokeLater(() -> {
+        	gamePanel.setPlayerTilePosition(playerX, playerY);
+        });
     }
 
     private void setupControllerInput() {
@@ -62,7 +72,7 @@ public class GameController {
         view.addKeyBinding(KeyStroke.getKeyStroke("W"), "moveUp", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-            	view.updatePlayerDirection("W");
+            	gamePanel.updatePlayerDirection("W");
                 movePlayer(0, -1);
             }
         });
@@ -71,7 +81,7 @@ public class GameController {
         view.addKeyBinding(KeyStroke.getKeyStroke("S"), "moveDown", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-            	view.updatePlayerDirection("S");
+            	gamePanel.updatePlayerDirection("S");
                 movePlayer(0, 1);
             }
         });
@@ -80,7 +90,7 @@ public class GameController {
         view.addKeyBinding(KeyStroke.getKeyStroke("A"), "moveLeft", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-            	view.updatePlayerDirection("A");
+            	gamePanel.updatePlayerDirection("A");
                 movePlayer(-1, 0);
             }
         });
@@ -89,7 +99,7 @@ public class GameController {
         view.addKeyBinding(KeyStroke.getKeyStroke("D"), "moveRight", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-            	view.updatePlayerDirection("D");
+            	gamePanel.updatePlayerDirection("D");
                 movePlayer(1, 0);
             }
         });
@@ -239,6 +249,7 @@ public class GameController {
         modelP.setPlayerPosX(newX);
         modelP.setPlayerPosY(newY);
 
+        gamePanel.setPlayerTilePosition(newX, newY);
         view.updateCoordinates(newX, newY);
     }
     
