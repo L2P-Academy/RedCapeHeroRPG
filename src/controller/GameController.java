@@ -169,7 +169,7 @@ public class GameController {
         					SaveGameView saveView = new SaveGameView(modelG);
         					saveView.setVisible(true);
         					saveView.toFront();
-        					saveView.requestFocus();
+        					saveView.requestFocus(); // Macht das PauseMenu wieder zu damit Savegame gezeigt werden kann
         				});
         			}
         		});

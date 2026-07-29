@@ -67,7 +67,7 @@ public class SaveGameView extends JFrame {
 
         JScrollPane scrollPane = new JScrollPane(savegameTable);
         scrollPane.setPreferredSize(new Dimension(800, 300));
-
+        // Buttons und die Funktion dahinter
         saveGameBtn = new JButton("Spiel speichern");
         saveGameBtn.setFont(buttonFont);
         AnimationController.beautifyButton(saveGameBtn);

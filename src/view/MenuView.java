@@ -89,7 +89,7 @@ public class MenuView extends JFrame {
 
 		loadGameBtn.addActionListener(e -> {
 		    SoundController.playBtnSound();
-		    setAlwaysOnTop(false); // Damit das Lademenu auch anzeigt wird wenn das Hauptding nicht geschlossen wird.
+		    setAlwaysOnTop(false); // Damit das Lademenu auch anzeigt wird wenn das Hauptding nicht geschlossen wird
 		    new SaveGameView();
 		});
 		
