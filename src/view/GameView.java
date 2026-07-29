@@ -153,12 +153,26 @@ public class GameView extends JFrame {
 			        topContainer.add(xpHudPanel, BorderLayout.NORTH);
 			        topContainer.add(topStatsContainer, BorderLayout.CENTER); 
 
-        // Füge alles dem Spielfeld hinzu
-        gameField.add(topContainer, BorderLayout.NORTH);
-        gameField.add(bottomContainer, BorderLayout.SOUTH);
+			        	//Container um verschiedene Layer zu erstellen
+				        JPanel hudLayer = new JPanel(new BorderLayout());
+				        hudLayer.setOpaque(false);
+				        hudLayer.add(topContainer, BorderLayout.NORTH);
+				        hudLayer.add(bottomContainer, BorderLayout.SOUTH);
+	
+				        //Ist dafür da damit man sich frei bewegen kann
+				        gameField.setLayout(null); 
+	
+				
+				        JPanel masterContainer = new JPanel();
+				        masterContainer.setLayout(new javax.swing.OverlayLayout(masterContainer));
+	
+				        masterContainer.add(hudLayer);
+				        masterContainer.add(gameField);
 
-        add(gameField, BorderLayout.CENTER);
-        setVisible(true);
+			        setLayout(new BorderLayout());
+			        add(masterContainer, BorderLayout.CENTER);
+			        
+			        setVisible(true);
     }
 
  
@@ -261,6 +275,13 @@ public class GameView extends JFrame {
     public void updateCoordinates(int x, int y) {
         if (coordinates != null) {
             coordinates.setText("X: " + x + " || Y: " + y);
+            if (playerSpriteLabel != null) {
+                int tileSize = 64;
+                int pixelX = x * tileSize;
+                int pixelY = y * tileSize;
+                
+                playerSpriteLabel.setLocation(pixelX, pixelY);
+            }
         }
     }
 
