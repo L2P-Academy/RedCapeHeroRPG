@@ -22,6 +22,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
+import model.NPCModel;
+import model.NPCRepository;
+
 public class GamePanel extends JPanel {
 	// map & tile size
 	private static final int TILE_SIZE = 64;
@@ -47,6 +50,7 @@ public class GamePanel extends JPanel {
 	private CameraView camera;
 	private Timer cameraTimer;
 	private JLabel playerSpriteLabel;
+	private JLabel blackSmithSpriteLabel;
 	
 	private int playerRow, playerCol;
 	
@@ -83,6 +87,7 @@ public class GamePanel extends JPanel {
 		loadPlayerSprites();		
 		loadTextures();
 		createProceduralMap();
+		loadNpcSprites();
 		
 	    this.camera = new CameraView(
 	            MAP_COLS * TILE_SIZE,
@@ -103,6 +108,26 @@ public class GamePanel extends JPanel {
 			repaint();
 		});		
 		cameraTimer.start();
+	}
+	
+	private void loadNpcSprites() {
+		NPCModel blackSmithNpc = NPCRepository.getNpcList().get(0);
+		// BlackSmith - Start Quest
+		URL urlDownIdle = getClass().getResource("/sprites_gifs/npc/Blacksmith/Down/idle.png");
+		ImageIcon iconDownIdle = getScaledIcon(urlDownIdle, (int) (TILE_SIZE*0.7), true);
+		
+		blackSmithSpriteLabel = new JLabel(iconDownIdle);
+		blackSmithSpriteLabel.setBounds(
+        		0, 
+        		0, 
+        		TILE_SIZE, 
+        		TILE_SIZE
+        );
+		
+		blackSmithSpriteLabel.setHorizontalAlignment(JLabel.CENTER);
+		blackSmithSpriteLabel.setVerticalAlignment(JLabel.CENTER);
+		
+		add(blackSmithSpriteLabel);
 	}
 
 	private void loadPlayerSprites() {
