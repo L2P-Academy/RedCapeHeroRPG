@@ -27,7 +27,6 @@ public class GameView extends JFrame {
     private GamePanel gameField;
     private JLabel coordinates, npcPicture, playerSpriteLabel;
     public JLabel timeStamp;
-    private ImageIcon iconUp, iconDown, iconLeft, iconRight;
     private JProgressBar healthPoints, abilityPoints, xperiencePoints;
     private boolean isDialogActive = false;
     private Timer gameTimer;
@@ -35,7 +34,7 @@ public class GameView extends JFrame {
 
     public GameView() {
         initWindow();
-        initComponents();
+        initComponents();        
         startGameTimer();
         setDialogActive(isDialogActive);
     }
@@ -73,25 +72,6 @@ public class GameView extends JFrame {
     private void initComponents() {
         Font gameFont = AnimationController.loadDungeonFont(42f);
         gameField = new GamePanel();
-        gameField.setLayout(new BorderLayout());
-      
-        URL urlUp = getClass().getResource("/playeranimation/player_idle_up.gif");
-        URL urlDown = getClass().getResource("/playeranimation/player_idle_down.gif");
-        URL urlLeft = getClass().getResource("/playeranimation/player_idle_left.gif");
-        URL urlRight = getClass().getResource("/playeranimation/player_idle_right.gif");
-        
-        if (urlUp != null && urlDown != null && urlLeft != null && urlRight != null) {
-            iconUp = new ImageIcon(urlUp);
-            iconDown = new ImageIcon(urlDown);
-            iconLeft = new ImageIcon(urlLeft);
-            iconRight = new ImageIcon(urlRight);            
-         
-            playerSpriteLabel = new JLabel(iconDown);
-            playerSpriteLabel.setSize(64, 64);
-            gameField.add(playerSpriteLabel);
-        } else {
-            System.err.println("Fehler: Mindestens ein Spieler-GIF wurde nicht gefunden!");
-        } 
         
 	        timeStamp = new JLabel("00:00:00"); // Ist nur Testweise erstmal vorhanden
 	        timeStamp.setForeground(Color.WHITE);
@@ -153,12 +133,30 @@ public class GameView extends JFrame {
 			        topContainer.add(xpHudPanel, BorderLayout.NORTH);
 			        topContainer.add(topStatsContainer, BorderLayout.CENTER); 
 
-        // Füge alles dem Spielfeld hinzu
-        gameField.add(topContainer, BorderLayout.NORTH);
-        gameField.add(bottomContainer, BorderLayout.SOUTH);
-
-        add(gameField, BorderLayout.CENTER);
-        setVisible(true);
+			        	//Container um verschiedene Layer zu erstellen
+				        JPanel hudLayer = new JPanel(new BorderLayout());
+				        hudLayer.setOpaque(false);
+				        hudLayer.add(topContainer, BorderLayout.NORTH);
+				        hudLayer.add(bottomContainer, BorderLayout.SOUTH);
+	
+				        //Ist dafür da damit man sich frei bewegen kann
+				        gameField.setLayout(null);
+	
+				
+				        JPanel masterContainer = new JPanel() {
+                            @Override
+                            public boolean isOptimizedDrawingEnabled() {
+                                return false; 
+                            }
+                        };
+                        masterContainer.setLayout(new javax.swing.OverlayLayout(masterContainer));    
+                        masterContainer.add(hudLayer);
+                        masterContainer.add(gameField);
+                        
+			        setLayout(new BorderLayout());
+			        add(masterContainer, BorderLayout.CENTER);
+			        
+			        setVisible(true);
     }
 
  
@@ -261,6 +259,13 @@ public class GameView extends JFrame {
     public void updateCoordinates(int x, int y) {
         if (coordinates != null) {
             coordinates.setText("X: " + x + " || Y: " + y);
+            if (playerSpriteLabel != null) {
+                int tileSize = 64;
+                int pixelX = x * tileSize;
+                int pixelY = y * tileSize;
+                
+                playerSpriteLabel.setLocation(pixelX, pixelY);
+            }
         }
     }
 
@@ -276,24 +281,14 @@ public class GameView extends JFrame {
         gameField.getInputMap(JPanel.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, actionName);
         gameField.getActionMap().put(actionName, action);
     }
-    
- // Methode, um das GIF je nach Richtung zu tauschen
-    public void updatePlayerDirection(String direction) {
-        if (playerSpriteLabel == null) return;
-        switch (direction) {
-            case "W":
-                if (playerSpriteLabel.getIcon() != iconUp) playerSpriteLabel.setIcon(iconUp);
-                break;
-            case "S":
-                if (playerSpriteLabel.getIcon() != iconDown) playerSpriteLabel.setIcon(iconDown);
-                break;
-            case "A":
-                if (playerSpriteLabel.getIcon() != iconLeft) playerSpriteLabel.setIcon(iconLeft);
-                break;
-            case "D":
-                if (playerSpriteLabel.getIcon() != iconRight) playerSpriteLabel.setIcon(iconRight);
-                break;
-        }
-    }
-    
+
+
+	public GamePanel getGameField() {
+		return gameField;
+	}
+
+
+	public void setGameField(GamePanel gameField) {
+		this.gameField = gameField;
+	}    
 }
