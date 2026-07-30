@@ -48,7 +48,6 @@ public class GameView extends JFrame {
         setSize(1920, 1080);
     }
     
-    // TODO:
 	public void startGameTimer() {
 		gameTimer = new Timer(1000, e -> {
 			elapsedSeconds++;
