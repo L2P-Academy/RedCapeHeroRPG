@@ -18,6 +18,7 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 import controller.AnimationController;
+import model.GameStateModel;
 
 public class SaveGameView extends JFrame {
 	
@@ -25,11 +26,20 @@ public class SaveGameView extends JFrame {
     private JTable savegameTable; // Tabelle für die Spielstände
     private JButton saveGameBtn, loadGameBtn, cancelBtn; // Button für die 3 Actionen
     private DefaultTableModel tableModel; //
+    private GameStateModel currentGameState; // aktueller Spielstand
     
     public SaveGameView() { // 
+    	this.currentGameState = null;
     	initWindow();
         initComponents();
     }
+    
+    public SaveGameView(GameStateModel currentGameState) { // 
+    	this.currentGameState = currentGameState;
+    	initWindow();
+        initComponents();
+    }
+    
     //Save Game Fenster
     private void initWindow() {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -37,92 +47,52 @@ public class SaveGameView extends JFrame {
         setSize(1000, 600);
         setLocationRelativeTo(null);
         setResizable(false);
+        setVisible(true);
     }
-    
+
     private void initComponents() {
-    	Font gameFont = AnimationController.loadDungeonFont(32f); // Font in groß
-    	Font smallFont = AnimationController.loadDungeonFont(24f); // Font in klein
-    	
-    	// Oberer Teil
-    	JPanel mainPanel = new JPanel (new BorderLayout(10, 10));
-    	mainPanel.setBackground(Color.BLACK);
-    	mainPanel.setBorder(javax.swing.BorderFactory.createLineBorder(Color.RED, 3));
-    	
-    	// Label mit Fenstername
-    	titleLabel = new JLabel ("Spielstände verwalten");
-    	titleLabel.setForeground(Color.RED);
-    	titleLabel.setFont(gameFont);
-    	titleLabel.setHorizontalAlignment(JLabel.CENTER);
-    	titleLabel.setPreferredSize(new Dimension(0, 60));
-    	// Tabelle mit den Speicherständen
-    	
-    	tableModel = new DefaultTableModel(new Object[] {"Name", "Level", "XP", "Position"},0); // Werte die für den Spielstand angegeben werden
-    	savegameTable = new JTable(tableModel);
-    	savegameTable.setBackground(Color.DARK_GRAY);
-    	savegameTable.setForeground(Color.WHITE);
-    	savegameTable.setFont(smallFont);
-    	savegameTable.getTableHeader().setBackground(Color.gray);
-    	savegameTable.getTableHeader().setForeground(Color.WHITE);
-    	savegameTable.getTableHeader().setFont(smallFont);
-    	savegameTable.setRowHeight(40);
-    	savegameTable.setSelectionBackground(Color.RED);
-    	savegameTable.setSelectionForeground(Color.WHITE);
-    	
-    	JScrollPane scrollPane = new JScrollPane(savegameTable);
-        scrollPane.setBackground(Color.DARK_GRAY);
-        scrollPane.getVerticalScrollBar().setBackground(Color.DARK_GRAY);
-    	
-    	// Knöpfe unten
-    	JPanel buttonPanel = new JPanel (new GridLayout(1, 3, 15, 0));
-    	buttonPanel.setBackground(Color.BLACK);
-    	buttonPanel.setPreferredSize(new Dimension(0, 80));
-    	
-    	saveGameBtn = createButton("Spiel speichern", smallFont);
-    	AnimationController.beautifyButton(saveGameBtn);
-    	loadGameBtn = createButton("Spiel laden", smallFont);
-    	AnimationController.beautifyButton(loadGameBtn);
-    	cancelBtn = createButton("Abbrechen", smallFont);
-    	AnimationController.beautifyButton(cancelBtn);
-    	
-    	buttonPanel.add(saveGameBtn);
+    	Font titleFont = AnimationController.loadDungeonFont(32f);
+        Font buttonFont = AnimationController.loadDungeonFont(22f);
+
+        JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
+        mainPanel.setBackground(Color.BLACK);
+
+        titleLabel = new JLabel("Spielstände verwalten", JLabel.CENTER); // Label für das Fenster
+        titleLabel.setForeground(Color.RED);
+        titleLabel.setFont(titleFont);
+
+        String[] columns = {"Spielername", "Letztes Speichern", "Score"};
+        tableModel = new DefaultTableModel(columns, 0);
+        savegameTable = new JTable(tableModel);
+
+        JScrollPane scrollPane = new JScrollPane(savegameTable);
+        scrollPane.setPreferredSize(new Dimension(800, 300));
+        // Buttons und die Funktion dahinter
+        saveGameBtn = new JButton("Spiel speichern");
+        saveGameBtn.setFont(buttonFont);
+        AnimationController.beautifyButton(saveGameBtn);
+
+        loadGameBtn = new JButton("Spiel laden");
+        loadGameBtn.setFont(buttonFont);
+        AnimationController.beautifyButton(loadGameBtn);
+
+        cancelBtn = new JButton("Abbrechen");
+        cancelBtn.setFont(buttonFont);
+        AnimationController.beautifyButton(cancelBtn);
+        cancelBtn.addActionListener(e -> dispose());
+
+        JPanel buttonPanel = new JPanel(new GridLayout(1, 3, 10, 10));
+        buttonPanel.setBackground(Color.BLACK);
+        buttonPanel.add(saveGameBtn);
         buttonPanel.add(loadGameBtn);
         buttonPanel.add(cancelBtn);
-    	
+
         mainPanel.add(titleLabel, BorderLayout.NORTH);
         mainPanel.add(scrollPane, BorderLayout.CENTER);
         mainPanel.add(buttonPanel, BorderLayout.SOUTH);
 
-        add(mainPanel, BorderLayout.CENTER);
-        
-    }
-        
-        private JButton createButton(String string, Font smallFont) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-		public void addSavegameRow(String name, int level, int xp, String position) {
-            tableModel.addRow(new Object[]{name, level, xp, position});
-
-    }
-        public int getSelectedSavegameIndex() {
-            return savegameTable.getSelectedRow();
-            
-    }
-        
-        // Action Listener für Buttons
-        public void addSaveGameListener(ActionListener listener) {
-        	saveGameBtn.addActionListener(listener);
-        }
-
-        public void addLoadGameListener(ActionListener listener) {
-        	loadGameBtn.addActionListener(listener);
-        }
-
-        public void addCancelListener(ActionListener listener) {
-        	cancelBtn.addActionListener(listener);
-        }
-        
-        
+        add(mainPanel);
+    }   
         //Getter und Setterkram
         
 		public JLabel getTitleLabel() {

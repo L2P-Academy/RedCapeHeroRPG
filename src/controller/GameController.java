@@ -26,6 +26,7 @@ import view.GameView;
 import view.InventoryView;
 import view.MenuView;
 import view.SettingsView;
+import view.SaveGameView;
 
 public class GameController {
 
@@ -169,13 +170,19 @@ public class GameController {
         		AnimationController.beautifyButton(saveBtn);
         		saveBtn.addActionListener(new ActionListener() {
 
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						SoundController.playBtnSound();
-						// TODO: new SaveGameView();
-						pauseDialog.dispose();
-					}
-				});
+        			@Override
+        			public void actionPerformed(ActionEvent e) {
+        				SoundController.playBtnSound();
+        				pauseDialog.dispose();
+        				
+        				javax.swing.SwingUtilities.invokeLater(() -> {
+        					SaveGameView saveView = new SaveGameView(modelG);
+        					saveView.setVisible(true);
+        					saveView.toFront();
+        					saveView.requestFocus(); // Macht das PauseMenu wieder zu damit Savegame gezeigt werden kann
+        				});
+        			}
+        		});
         		
         		JButton settingsBtn = new JButton("Einstellungen");
         		AnimationController.beautifyButton(settingsBtn);

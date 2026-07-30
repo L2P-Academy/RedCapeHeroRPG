@@ -87,54 +87,13 @@ public class MenuView extends JFrame {
 			}
 		});
 
-		loadGameBtn.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// for testing -> GameView
-				SoundController.playBtnSound();
-				SoundController.stopMusicLoop();				
-				
-                ClassModel testClass = new ClassModel(
-                        1,                            // id
-                        "Test-Ritter",                // name
-                        "Eine Klasse zum Testen",     // description
-                        5,                            // bonusStrength
-                        5,                            // bonusEndurance
-                        2                             // bonusDamage
-                );
-                
-                PlayerModel testPlayer = new PlayerModel(
-                        2,          // playerPosX
-                        2,          // playerPosY
-                        "TestHero",   // name
-                        100,          // maxHealth
-                        10,           // strength
-                        10,           // endurance
-                        5,            // baseDmg
-                        2,            // baseArmor
-                        testClass     // Alberts ClassModel übergeben!
-                );
-                
-                testPlayer.setCurrentXp(35); 
-                
-                long currentTime = System.currentTimeMillis();
-                GameStateModel testModel = new GameStateModel(
-                        "TestHero",                     
-                        new java.sql.Date(currentTime), 
-                        testPlayer,                     // <-- Unser PlayerModel!
-                        35,                             
-                        150,                            
-                        250,                            
-                        null                            
-                );
-                
-                SwingUtilities.invokeLater(() -> {
-                    GameView gameView = new GameView();
-                    GameController controller = new GameController(gameView, testModel);
-                });
-				dispose();
-			}
-		});
+		loadGameBtn.addActionListener(e -> {
+		    SoundController.playBtnSound();
+		    setAlwaysOnTop(false); // Damit das Lademenu auch anzeigt wird wenn das Hauptding nicht geschlossen wird
+		    new SaveGameView();
+        SoundController.stopMusicLoop();
+        dispose();
+		});		
 
 		settingsBtn.addActionListener(new ActionListener() {
 
