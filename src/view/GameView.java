@@ -25,7 +25,7 @@ public class GameView extends JFrame {
 
     private JPanel dialogBoxPanel, xpHudPanel, lifeHudPanel, abilityHudPanel, miniMap;
     private GamePanel gameField;
-    private JLabel coordinates, npcPicture, playerSpriteLabel;
+    private JLabel coordinates, npcPicture, playerSpriteLabel,dialogBoxLabel;
     public JLabel timeStamp;
     private JProgressBar healthPoints, abilityPoints, xperiencePoints;
     private boolean isDialogActive = false;
@@ -230,18 +230,17 @@ public class GameView extends JFrame {
 
     //Erstellt die Box für Dialoge mit NPC Bild
     private JPanel createDialogBox() {
-    	Font gameFont = AnimationController.loadDungeonFont(36f);
+        Font gameFont = AnimationController.loadDungeonFont(36f);
         JPanel panel = new JPanel(new BorderLayout(15, 10));
-	        panel.setPreferredSize(new Dimension(0, 150));
-	        panel.setBackground(Color.LIGHT_GRAY);
+        panel.setPreferredSize(new Dimension(0, 150));
+        panel.setBackground(Color.LIGHT_GRAY);
 
 
-        JLabel dialogBoxLabel = new JLabel(" Hier steht ein Text zum testen");
-        	dialogBoxLabel.setForeground(Color.BLACK);
-        	dialogBoxLabel.setFont(gameFont);
+        dialogBoxLabel = new JLabel("");
+        dialogBoxLabel.setForeground(Color.BLACK);
+        dialogBoxLabel.setFont(gameFont);
 
-
-        npcPicture = new JLabel("NPC BILD", JLabel.CENTER);
+        npcPicture = new JLabel("", JLabel.CENTER);
         npcPicture.setPreferredSize(new Dimension(200, 200));
         npcPicture.setOpaque(true);
         npcPicture.setBackground(Color.DARK_GRAY);
@@ -252,7 +251,36 @@ public class GameView extends JFrame {
         
         return panel;
     }
+    public void showNpcDialog(String name, String text, String imagePath) {
+        if (dialogBoxLabel != null) {
+            dialogBoxLabel.setText(" " + name + ": " + text);
+        }
 
+        if (npcPicture != null && imagePath != null) {
+            URL url = getClass().getResource(imagePath);
+            if (url != null) {
+                ImageIcon originalIcon = new ImageIcon(url);
+                // Skaliert das NPC-Bild passend in die Box (z.B. 150x150 Pixel)
+                java.awt.Image scaledImage = originalIcon.getImage().getScaledInstance(150, 150, java.awt.Image.SCALE_DEFAULT);
+                npcPicture.setIcon(new ImageIcon(scaledImage));
+                npcPicture.setText("");
+            } else {
+                npcPicture.setIcon(null);
+                npcPicture.setText("Bild fehlerhaft");
+            }
+        }
+    }
+
+    // Setzt die Dialogbox zurück, wenn der Dialog geschlossen wird
+    public void hideNpcDialog() {
+        if (dialogBoxLabel != null) {
+            dialogBoxLabel.setText(" ");
+        }
+        if (npcPicture != null) {
+            npcPicture.setIcon(null);
+            npcPicture.setText("NPC BILD"); 
+        }
+    }
     
  // Aktualisiert die Koordinaten-Anzeige
     public void updateCoordinates(int x, int y) {
