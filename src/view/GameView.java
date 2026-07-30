@@ -143,12 +143,16 @@ public class GameView extends JFrame {
 				        gameField.setLayout(null);
 	
 				
-				        JPanel masterContainer = new JPanel();
-				        masterContainer.setLayout(new javax.swing.OverlayLayout(masterContainer));
-	
-				        masterContainer.add(hudLayer);
-				        masterContainer.add(gameField);
-
+				        JPanel masterContainer = new JPanel() {
+                            @Override
+                            public boolean isOptimizedDrawingEnabled() {
+                                return false; 
+                            }
+                        };
+                        masterContainer.setLayout(new javax.swing.OverlayLayout(masterContainer));    
+                        masterContainer.add(hudLayer);
+                        masterContainer.add(gameField);
+                        
 			        setLayout(new BorderLayout());
 			        add(masterContainer, BorderLayout.CENTER);
 			        
