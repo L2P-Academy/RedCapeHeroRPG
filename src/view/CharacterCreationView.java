@@ -145,7 +145,7 @@ public class CharacterCreationView extends JFrame {
 				GameStateModel testModel = new GameStateModel(
                         "TestHero",                     // Spielername
                         new java.sql.Date(currentTime), // Speicherzeit
-                        new PlayerModel(0, 0, nameField.getText(), 100, 3, 3, 1, 1, classList.getSelectedValue()),                           // PlayerModel (noch nicht vorhanden)
+                        new PlayerModel(750, 500, nameField.getText(), 100, 3, 3, 1, 1, classList.getSelectedValue()),                           // PlayerModel (noch nicht vorhanden)
                         35,                             // Start-Score (nutzen wir hier für XP)
                         150,                            // Start X-Koordinate
                         250,                            // Start Y-Koordinate
