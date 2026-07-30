@@ -1,132 +1,181 @@
 package view;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+import controller.AnimationController; 
 
 public class SettingsView extends JFrame {
 
-    // Menu options and selection index
-    private String[] options = {"Volume", "Resolution", "Gamma", "Back to Menu"};
+    // Menu options 
+    private String[] options = {"Lautstärke", "Auflösung", "Helligkeit", "Zurück zum Hauptmenü"};
     private int selectedIndex = 0;
+    
+    // Color palette
+    private static final Color BG_COLOR = new Color(235, 235, 235);
+    private static final Color BUTTON_RED = new Color(189, 2, 0);
+    private static final Color HOVER_COLOR = new Color(237, 158, 12); 
 
     public SettingsView() {
         setTitle("Red Cape Hero - Settings");
         setSize(800, 600);
         setLocationRelativeTo(null); // Center window on screen
-        setAlwaysOnTop(true); // Keep window on top
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Close only this frame
+        setUndecorated(true);         // Borderless frame like ShopView
+        setAlwaysOnTop(true);        // Keep window on top
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-        // KeyListener for menu navigation (Arrow keys + Enter/ESC)
+        // Menu navigation
+        JPanel drawPanel = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2d = (Graphics2D) g;
+
+                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+                // Background
+                g2d.setColor(BG_COLOR);
+                g2d.fillRect(0, 0, getWidth(), getHeight());
+
+                // Outer red border
+                g2d.setColor(BUTTON_RED);
+                g2d.setStroke(new BasicStroke(6));
+                g2d.drawRect(3, 3, getWidth() - 6, getHeight() - 6);
+
+                // Title
+                Font titleFont = AnimationController.loadDungeonFont(48f);
+                g2d.setFont(titleFont);
+                g2d.setColor(BUTTON_RED);
+                FontMetrics fmTitle = g2d.getFontMetrics();
+                int titleX = (getWidth() - fmTitle.stringWidth("EINSTELLUNGEN")) / 2;
+                g2d.drawString("EINSTELLUNGEN", titleX, 100);
+
+                // Menu Buttons
+                Font itemFont = AnimationController.loadDungeonFont(32f);
+                g2d.setFont(itemFont);
+                FontMetrics fmItem = g2d.getFontMetrics();
+
+                int buttonWidth = 400;
+                int buttonHeight = 60;
+                int startX = (getWidth() - buttonWidth) / 2;
+
+                for (int i = 0; i < options.length; i++) {
+                    int buttonY = 160 + (i * 70);
+
+                    if (i == selectedIndex) {
+                        g2d.setColor(HOVER_COLOR);
+                    } else {
+                        g2d.setColor(BUTTON_RED);
+                    }
+                    g2d.fillRect(startX, buttonY, buttonWidth, buttonHeight);
+
+                    g2d.setColor(HOVER_COLOR);
+                    g2d.setStroke(new BasicStroke(2));
+                    g2d.drawRect(startX, buttonY, buttonWidth, buttonHeight);
+
+                    g2d.setColor(Color.BLACK);
+                    int textX = startX + (buttonWidth - fmItem.stringWidth(options[i])) / 2;
+                    int textY = buttonY + ((buttonHeight - fmItem.getHeight()) / 2) + fmItem.getAscent();
+
+                    g2d.drawString(options[i], textX, textY);
+                }
+            }
+        };
+        setContentPane(drawPanel);
+        // KeyListener
         addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
                 int keyCode = e.getKeyCode();
 
-                // Navigate UP
                 if (keyCode == KeyEvent.VK_UP || keyCode == KeyEvent.VK_W) {
                     selectedIndex--;
                     if (selectedIndex < 0) {
                         selectedIndex = options.length - 1;
                     }
-                    repaint(); // Redraw UI
+                    drawPanel.repaint();
                 }
 
-                // Navigate DOWN
                 if (keyCode == KeyEvent.VK_DOWN || keyCode == KeyEvent.VK_S) {
                     selectedIndex++;
                     if (selectedIndex >= options.length) {
                         selectedIndex = 0;
                     }
-                    repaint(); // Redraw UI
+                    drawPanel.repaint();
                 }              
                 if (keyCode == KeyEvent.VK_ENTER) {
-                    selectOption(); // Confirm selection with ENTER
+                    SettingsView.this.selectOption();
                 }              
                 if (keyCode == KeyEvent.VK_ESCAPE) {
-                    dispose(); // Close the settings window
+                    dispose();
                 }
             }
         });
-        
-        // MouseListener for clicking on menu items
-        addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                int mouseX = e.getX();
-                int mouseY = e.getY();
 
-                // Check click coordinates for each option bounding box
+        // MouseListener
+        MouseAdapter mouseHandler = new MouseAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                int mouseX = e.getX();
+                int mouseY = e.getY();                
+                int buttonWidth = 400;
+                int startX = (getWidth() - buttonWidth) / 2;
+
                 for (int i = 0; i < options.length; i++) {
-                    int y = 200 + (i * 50);
-                    // Define click area for each menu text item
-                    Rectangle bounds = new Rectangle(240, y - 25, 200, 35);
+                    int buttonY = 160 + (i * 70);                    
+                    Rectangle bounds = new Rectangle(startX, buttonY, buttonWidth, 60);
 
                     if (bounds.contains(mouseX, mouseY)) {
-                        selectedIndex = i;
-                        repaint();
-                        selectOption();
+                        if (selectedIndex != i) {
+                            selectedIndex = i;
+                            drawPanel.repaint();
+                        }
                         break;
                     }
-                }
+                } 
             }
-        });
 
-        setFocusable(true); // Required to register key events
-        setVisible(true); // Display window
-    }
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                selectOption();
+            }
+        };
+
+        addMouseListener(mouseHandler);
+        addMouseMotionListener(mouseHandler);
+
+        setFocusable(true);
+        setVisible(true);
+    } 
 
     // Handles the active menu selection
     private void selectOption() {
         switch (selectedIndex) {
-            case 0: // Volume
-            	System.out.println("Volume clicked!");
-            	break;
-            case 1: // Resolution
-            	System.out.println("Resolution clicked!");
+            case 0:
+                System.out.println("Lautstärke ausgewählt!");
                 break;
-            case 2: // Gamma
-            	System.out.println("Gamma clicked!");
+            case 1:
+                System.out.println("Auflösung ausgewählt!");
                 break;
-            case 3: // Back to Menu
-                dispose(); // Close frame and return to main menu
+            case 2:
+                System.out.println("Helligkeit ausgewählt!");
+                break;
+            case 3:
+                dispose();
                 break;
         }
     }
 
-    @Override
-    public void paint(Graphics g) {
-        super.paint(g);
-        Graphics2D g2d = (Graphics2D) g;
-
-        // 1. Render background color (Dark Blue)
-        g2d.setColor(new Color(16, 62, 161));
-        g2d.fillRect(0, 0, getWidth(), getHeight());
-
-        // 2. Render title
-        g2d.setFont(new Font("Calibri", Font.BOLD, 36));
-        g2d.setColor(Color.WHITE);
-        g2d.drawString("SETTINGS", 310, 100);
-
-        // 3. Render menu items
-        g2d.setFont(new Font("Calibri", Font.PLAIN, 24));
-        for (int i = 0; i < options.length; i++) {
-            int y = 200 + (i * 50);
-
-            if (i == selectedIndex) {
-                g2d.setColor(new Color(37, 232, 7)); // Bright green for active option
-                g2d.drawString("> " + options[i], 250, y);
-            } else {
-                g2d.setColor(Color.WHITE);
-                g2d.drawString("  " + options[i], 250, y);
-            }
-        }
-    }
 }
