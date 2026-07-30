@@ -1,14 +1,17 @@
 package view;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.Map;
 
 import java.util.Random;
@@ -17,7 +20,6 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.SwingConstants;
 
 public class GamePanel extends JPanel {
 	// map & tile size
@@ -27,15 +29,16 @@ public class GamePanel extends JPanel {
 	
 	// tile probability for procedural generation
 	private static final double DIRT_PROB = 0.01;
-	private static final double TREE_PROB = 0.01;
+	private static final double TREE_PROB = 0.1;
 	private static final double FLOWERS_PROB = 0.05;
-	private static final double STONE_PROB = 0.02;
+	private static final double STONE_PROB = 0.05;
 	private static final double CORRUPTED_GRASS_PROB = 0.02;
 	
 	private static final long WORLD_SEED = 42L;
 	
 	// player movement/sprites
     private ImageIcon iconUp, iconDown, iconLeft, iconRight;
+    private final Map<String, ImageIcon> iconCache = new HashMap<>();
 	
 	// all existing tiles & textures
 	private TileType[][] tiles;
@@ -96,11 +99,12 @@ public class GamePanel extends JPanel {
         URL urlLeft = getClass().getResource("/playeranimation/player_idle_left.gif");
         URL urlRight = getClass().getResource("/playeranimation/player_idle_right.gif");
         
-        if (urlUp != null && urlDown != null && urlLeft != null && urlRight != null) {
-            iconUp = new ImageIcon(urlUp);
-            iconDown = new ImageIcon(urlDown);
-            iconLeft = new ImageIcon(urlLeft);
-            iconRight = new ImageIcon(urlRight);            
+        if (urlUp != null && urlDown != null && urlLeft != null && urlRight != null) { 
+            
+            iconUp = getScaledIcon(urlUp, (int) (TILE_SIZE*0.7), true);            
+            iconDown = getScaledIcon(urlDown, (int) (TILE_SIZE*0.7), true);            
+            iconLeft = getScaledIcon(urlLeft, (int) (TILE_SIZE*0.7), true);
+            iconRight = getScaledIcon(urlRight, (int) (TILE_SIZE*0.7), true);
          
             playerSpriteLabel = new JLabel(iconDown);
             playerSpriteLabel.setBounds(
@@ -108,7 +112,10 @@ public class GamePanel extends JPanel {
             		0, 
             		TILE_SIZE, 
             		TILE_SIZE
-            );            
+            );
+            
+            playerSpriteLabel.setHorizontalAlignment(JLabel.CENTER);
+            playerSpriteLabel.setVerticalAlignment(JLabel.CENTER);
             
             add(playerSpriteLabel);
         } else {
@@ -116,6 +123,58 @@ public class GamePanel extends JPanel {
         } 
 
 	}
+	
+	private ImageIcon getScaledIcon(URL path, int size, boolean isAnimatedGif) {		
+		if (path == null)
+			return null;
+		
+		String key = path.toExternalForm()
+				+ "@"
+				+ size
+				+ (isAnimatedGif ? "#gif" : "#static");
+		
+		ImageIcon cached = iconCache.get(key);
+		
+		if (cached != null) {
+			return cached;
+		}		
+
+		if (isAnimatedGif) {
+			ImageIcon originalIcon = new ImageIcon(path);
+			
+			Image scaledImage = originalIcon
+					.getImage()
+					.getScaledInstance(size, size, Image.SCALE_DEFAULT);
+			
+			ImageIcon scaledIcon = new ImageIcon(scaledImage);
+			iconCache.put(key, scaledIcon);			
+			return scaledIcon;
+		} else {
+			try {
+				BufferedImage src = ImageIO.read(path);
+				BufferedImage scaledImage = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
+				
+				Graphics2D g = scaledImage.createGraphics();
+				
+				g.setRenderingHint(
+						RenderingHints.KEY_INTERPOLATION,
+						RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+				
+				g.drawImage(src, 0, 0, size, size, null);
+				g.dispose();
+				
+				ImageIcon scaledIcon = new ImageIcon(scaledImage);
+				iconCache.put(key, scaledIcon);
+				
+				return scaledIcon;				
+			} catch (IOException e) {				
+				System.err.println("Bild konnte nicht skaliert werden!");
+				e.printStackTrace();
+				return new ImageIcon(path);
+			}
+		}
+	}
+	
 	// set player position by tile
 	public void setPlayerTilePosition(int playerCol, int playerRow) {
 	    this.playerCol = playerCol;
