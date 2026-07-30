@@ -2,11 +2,16 @@ package view;
 
 public class CameraView {
 
-    private int x;
-    private int y;
+    private double x;
+    private double y;
+    
+    private double targetX;
+    private double targetY;
 
     private final int worldWidth;
     private final int worldHeight;
+    
+    private static final double CAMERA_SMOOTHNESS = 0.08;
 
     public CameraView(int worldWidth, int worldHeight) {
         this.worldWidth = worldWidth;
@@ -31,14 +36,77 @@ public class CameraView {
         clampToWorld(viewportWidth, viewportHeight);
     }
 
-    public void centerOn(int worldX, int worldY,
+    public void centerOn(double worldX, double worldY,
                          int viewportWidth, int viewportHeight) {
 
-        x = worldX - viewportWidth / 2;
-        y = worldY - viewportHeight / 2;
+        targetX = worldX - viewportWidth / 2.0;
+        targetY = worldY - viewportHeight / 2.0;
 
         clampToWorld(viewportWidth, viewportHeight);
     }
+    
+    public void update() {
+    		x += (targetX - x) * CAMERA_SMOOTHNESS;
+    		y += (targetY - y) * CAMERA_SMOOTHNESS;
+    		
+    		if (Math.abs(targetX - x) < 0.05) {
+				x = targetX;
+		}
+    		
+    		if (Math.abs(targetY - y) < 0.05) {
+				y = targetY;
+		}    		
+    }
+    
+	private void moveTarget(double deltaX, double deltaY, int viewPortWidth, int viewPortHeight) {
+		targetX += deltaX;
+		targetY += deltaY;
+		
+		clampTargetToWorld(viewPortWidth, viewPortHeight);
+	}
+	
+	 public void setPositionImmediately(
+	            double x,
+	            double y,
+	            int viewportWidth,
+	            int viewportHeight) {
+
+	        this.x = x;
+	        this.y = y;
+
+	        targetX = x;
+	        targetY = y;
+
+	        clampTargetToWorld(viewportWidth, viewportHeight);
+
+	        this.x = targetX;
+	        this.y = targetY;
+	    }
+
+	    private void clampTargetToWorld(
+	            int viewportWidth,
+	            int viewportHeight) {
+
+	        double maxX = Math.max(
+	                0,
+	                worldWidth - viewportWidth
+	        );
+
+	        double maxY = Math.max(
+	                0,
+	                worldHeight - viewportHeight
+	        );
+
+	        targetX = Math.max(
+	                0,
+	                Math.min(targetX, maxX)
+	        );
+
+	        targetY = Math.max(
+	                0,
+	                Math.min(targetY, maxY)
+	        );
+	    }
 
     private void clampToWorld(int viewportWidth, int viewportHeight) {
 
@@ -49,11 +117,11 @@ public class CameraView {
         y = Math.max(0, Math.min(y, maxY));
     }
 
-    public int getX() {
+    public double getX() {
         return x;
     }
 
-    public int getY() {
+    public double getY() {
         return y;
     }
 }

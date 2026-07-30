@@ -20,6 +20,7 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.Timer;
 
 public class GamePanel extends JPanel {
 	// map & tile size
@@ -44,6 +45,7 @@ public class GamePanel extends JPanel {
 	private TileType[][] tiles;
 	
 	private CameraView camera;
+	private Timer cameraTimer;
 	private JLabel playerSpriteLabel;
 	
 	private int playerRow, playerCol;
@@ -86,6 +88,7 @@ public class GamePanel extends JPanel {
 	            MAP_COLS * TILE_SIZE,
 	            MAP_ROWS * TILE_SIZE
 	    );
+	    startCameraTimer();
 
 	    setPreferredSize(new Dimension(
 	            MAP_COLS * TILE_SIZE,
@@ -93,11 +96,20 @@ public class GamePanel extends JPanel {
 	    ));
 	}
 	
+	private void startCameraTimer() {
+		cameraTimer = new Timer(16, event -> {
+			camera.update();
+			updatePlayerScreenPosition();
+			repaint();
+		});		
+		cameraTimer.start();
+	}
+
 	private void loadPlayerSprites() {
-		URL urlUp = getClass().getResource("/playeranimation/player_idle_up.gif");
-        URL urlDown = getClass().getResource("/playeranimation/player_idle_down.gif");
-        URL urlLeft = getClass().getResource("/playeranimation/player_idle_left.gif");
-        URL urlRight = getClass().getResource("/playeranimation/player_idle_right.gif");
+		URL urlUp = getClass().getResource("/playeranimation/player_walk_up.gif");
+        URL urlDown = getClass().getResource("/playeranimation/player_walk_down.gif");
+        URL urlLeft = getClass().getResource("/playeranimation/player_walk_left.gif");
+        URL urlRight = getClass().getResource("/playeranimation/player_walk_right.gif");
         
         if (urlUp != null && urlDown != null && urlLeft != null && urlRight != null) { 
             
@@ -180,11 +192,11 @@ public class GamePanel extends JPanel {
 	    this.playerCol = playerCol;
 	    this.playerRow = playerRow;
 
-	    int playerCenterWorldX =
-	            playerCol * TILE_SIZE + TILE_SIZE / 2;
+	    double playerCenterWorldX =
+	            playerCol * TILE_SIZE + TILE_SIZE / 2.0;
 
-	    int playerCenterWorldY =
-	            playerRow * TILE_SIZE + TILE_SIZE / 2;
+	    double playerCenterWorldY =
+	            playerRow * TILE_SIZE + TILE_SIZE / 2.0;
 
 	    camera.centerOn(
 	            playerCenterWorldX,
@@ -192,8 +204,6 @@ public class GamePanel extends JPanel {
 	            getWidth(),
 	            getHeight()
 	    );
-
-	    updatePlayerScreenPosition();
 	    repaint();
 	}
 	
@@ -202,11 +212,11 @@ public class GamePanel extends JPanel {
 	        return;
 	    }
 
-	    int playerWorldX = playerCol * TILE_SIZE;
-	    int playerWorldY = playerRow * TILE_SIZE;
+	    double playerWorldX = playerCol * TILE_SIZE;
+	    double playerWorldY = playerRow * TILE_SIZE;
 
-	    int playerScreenX = playerWorldX - camera.getX();
-	    int playerScreenY = playerWorldY - camera.getY();
+	    int playerScreenX = (int) Math.round(playerWorldX - camera.getX());
+	    int playerScreenY = (int) Math.round(playerWorldY - camera.getY());
 
 	    playerSpriteLabel.setLocation(
 	            playerScreenX,
@@ -447,8 +457,8 @@ public class GamePanel extends JPanel {
 	        return;
 	    }
 
-	    int startCol = camera.getX() / TILE_SIZE;
-	    int startRow = camera.getY() / TILE_SIZE;
+	    int startCol = (int) (camera.getX() / TILE_SIZE);
+	    int startRow = (int) (camera.getY() / TILE_SIZE);
 
 	    int endCol = startCol + getWidth() / TILE_SIZE + 2;
 	    int endRow = startRow + getHeight() / TILE_SIZE + 2;
@@ -474,11 +484,11 @@ public class GamePanel extends JPanel {
 
 	    BufferedImage texture = textures.get(tileType);
 
-	    int worldX = col * TILE_SIZE;
-	    int worldY = row * TILE_SIZE;
+	    double worldX = col * TILE_SIZE;
+	    double worldY = row * TILE_SIZE;
 
-	    int screenX = worldX - camera.getX();
-	    int screenY = worldY - camera.getY();
+	    int screenX = (int) Math.round(worldX - camera.getX());
+	    int screenY = (int) Math.round(worldY - camera.getY());
 
 	    if (texture != null) {
 	        g.drawImage(

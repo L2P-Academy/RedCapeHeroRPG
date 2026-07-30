@@ -43,6 +43,12 @@ public class GameController {
     private boolean isInventoryActive = false;
     private boolean isShopActive = false;
     private boolean isPauseActive = false;
+    
+    // movement timings
+    private static final int MOVEMENT_DELAY_MS = 200;
+    private Timer movementTimer;
+    
+    private boolean moveUp, moveDown, moveLeft, moveRight;
 
     // Wir bleiben beim gewohnten 2-Parameter-Konstruktor!
     public GameController(GameView view, GameStateModel modelG) {
@@ -60,9 +66,41 @@ public class GameController {
         initGame();
         initPauseMenu();
         setupControllerInput();
+        initMovementTimer();
     }
     
-    private void initGame() {
+    private void initMovementTimer() {
+		movementTimer = new Timer(MOVEMENT_DELAY_MS, event -> updateMovement());
+		
+		movementTimer.setInitialDelay(10);
+		movementTimer.start();
+	}
+
+	private void updateMovement() {
+		if (isPauseActive || isInventoryActive || isShopActive || isDialogActive) {
+			return;
+		}
+		int deltaX = 0;
+		int deltaY = 0;
+		
+		if (moveUp && !moveDown) {
+			deltaY = -1;
+		} else if (moveDown && !moveUp) {
+			deltaY = 1;
+		}
+		
+		if (moveLeft && !moveRight) {
+			deltaX = -1;
+		} else if(moveRight && !moveLeft) {
+			deltaX = 1;
+		}
+		
+		if (deltaX != 0 || deltaY != 0) {
+			movePlayer(deltaX, deltaY);
+		}		
+	}
+
+	private void initGame() {
     	int playerX = modelP.getPlayerPosX();
     	int playerY = modelP.getPlayerPosY();
     	
@@ -78,38 +116,66 @@ public class GameController {
     private void setupControllerInput() {
     	
     	// W = Nach oben (Y wird kleiner)
-        view.addKeyBinding(KeyStroke.getKeyStroke("W"), "moveUp", new AbstractAction() {
+        view.addKeyBinding(KeyStroke.getKeyStroke("pressed W"), "moveUpPressed", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
+            	moveUp = true;
             	gamePanel.updatePlayerDirection("W");
-                movePlayer(0, -1);
+            }
+        });
+        
+        view.addKeyBinding(KeyStroke.getKeyStroke("released W"), "moveUpReleased", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            	moveUp = false;
             }
         });
 
         // S = Nach unten (Y wird größer)
-        view.addKeyBinding(KeyStroke.getKeyStroke("S"), "moveDown", new AbstractAction() {
+        view.addKeyBinding(KeyStroke.getKeyStroke("pressed S"), "moveDownPressed", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
+            	moveDown = true;
             	gamePanel.updatePlayerDirection("S");
-                movePlayer(0, 1);
+            }
+        });
+        
+        view.addKeyBinding(KeyStroke.getKeyStroke("released S"), "moveDownReleased", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            	moveDown = false;
             }
         });
 
         // A = Nach links (X wird kleiner)
-        view.addKeyBinding(KeyStroke.getKeyStroke("A"), "moveLeft", new AbstractAction() {
+        view.addKeyBinding(KeyStroke.getKeyStroke("pressed A"), "moveLeftPressed", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
+            	moveLeft = true;
             	gamePanel.updatePlayerDirection("A");
-                movePlayer(-1, 0);
+            }
+        });
+        
+        view.addKeyBinding(KeyStroke.getKeyStroke("released A"), "moveLeftReleased", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            	moveLeft = false;
             }
         });
 
         // D = Nach rechts (X wird größer)
-        view.addKeyBinding(KeyStroke.getKeyStroke("D"), "moveRight", new AbstractAction() {
+        view.addKeyBinding(KeyStroke.getKeyStroke("pressed D"), "moveRightPressed", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
+            	moveRight = true;
             	gamePanel.updatePlayerDirection("D");
-                movePlayer(1, 0);
+            }
+        });
+        
+        view.addKeyBinding(KeyStroke.getKeyStroke("released D"), "moveRightReleased", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            	moveRight = false;
             }
         });
         
