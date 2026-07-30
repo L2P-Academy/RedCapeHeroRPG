@@ -11,8 +11,8 @@ public class NPCRepository {
 
 	static {
 
-		// Innkeeper
-		NPCLIST.add(new NPCModel(0,"Wirt","Willkommen im Roten Umhang!",0,0));
+		// BlackSmith
+		NPCLIST.add(new NPCModel(0,"Schmied","Willkommen im Roten Amboss!", 762, 498));
 
 		// Healer
 		NPCLIST.add(new NPCModel(1,"Heilerin","Ich kann deine Wunden heilen.",0,0));
