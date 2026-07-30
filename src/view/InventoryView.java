@@ -37,6 +37,9 @@ public class InventoryView extends JFrame {
 		setSize(800, 400);
 		setTitle("Inventar");
 		setUndecorated(true);
+		
+		setFocusableWindowState(false); //Damit die gleiche Taste das Fenster wieder schließt
+		
 		setBackground(new Color(0, 0, 0, 0));
 		getContentPane().setBackground(new Color(0, 0, 0, 0));
 
@@ -79,7 +82,7 @@ public class InventoryView extends JFrame {
 		AnimationController.beautifyButton(closeButton);
 		closeButton.setFont(AnimationController.loadDungeonFont(28f));
 		closeButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		closeButton.addActionListener(e -> dispose());
+		closeButton.addActionListener(e -> setVisible(false));
 
 		closePanel.add(closeButton);
 
@@ -155,8 +158,8 @@ public class InventoryView extends JFrame {
 					} else {
 						System.out.println("Leerer Slot");
 					}
-					dispose();
-				});
+					setVisible(false);
+					});
 
 				slots[row][col] = slot;
 				panel.add(slot);
