@@ -2,14 +2,12 @@ package controller;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -19,23 +17,24 @@ import javax.swing.SwingConstants;
 import javax.swing.Timer;
 
 import model.GameStateModel;
+import model.NPCModel;
+import model.NPCRepository;
 import model.PlayerModel;
-import view.BackGroundPanel;
 import view.GamePanel;
 import view.GameView;
 import view.InventoryView;
-import view.ShopView;
 import view.MenuView;
-import view.SettingsView;
 import view.SaveGameView;
+import view.SettingsView;
+import view.ShopView;
 
 public class GameController {
 
     private GameView view;
     private GamePanel gamePanel;
     private GameStateModel modelG;   
-    private	PlayerModel modelP;
-    private InventoryView inventoryView; // Das Inventar-Fenster
+    private PlayerModel modelP;
+    private InventoryView inventoryView;
     private ShopView shopView;
     private JDialog pauseDialog;
     
@@ -50,7 +49,6 @@ public class GameController {
     
     private boolean moveUp, moveDown, moveLeft, moveRight;
 
-    // Wir bleiben beim gewohnten 2-Parameter-Konstruktor!
     public GameController(GameView view, GameStateModel modelG) {
         this.view = view;
         this.gamePanel = view.getGameField();
@@ -70,126 +68,178 @@ public class GameController {
     }
     
     private void initMovementTimer() {
-		movementTimer = new Timer(MOVEMENT_DELAY_MS, event -> updateMovement());
-		
-		movementTimer.setInitialDelay(10);
-		movementTimer.start();
-	}
+        movementTimer = new Timer(MOVEMENT_DELAY_MS, event -> updateMovement());
+        movementTimer.setInitialDelay(10);
+        movementTimer.start();
+    }
 
-	private void updateMovement() {
-		if (isPauseActive || isInventoryActive || isShopActive || isDialogActive) {
-			return;
-		}
-		int deltaX = 0;
-		int deltaY = 0;
-		
-		if (moveUp && !moveDown) {
-			deltaY = -1;
-		} else if (moveDown && !moveUp) {
-			deltaY = 1;
-		}
-		
-		if (moveLeft && !moveRight) {
-			deltaX = -1;
-		} else if(moveRight && !moveLeft) {
-			deltaX = 1;
-		}
-		
-		if (deltaX != 0 || deltaY != 0) {
-			movePlayer(deltaX, deltaY);
-		}		
-	}
+    private void updateMovement() {
+        if (isPauseActive || isInventoryActive || isShopActive || isDialogActive) {
+            return;
+        }
+        int deltaX = 0;
+        int deltaY = 0;
+        
+        if (moveUp && !moveDown) {
+            deltaY = -1;
+        } else if (moveDown && !moveUp) {
+            deltaY = 1;
+        }
+        
+        if (moveLeft && !moveRight) {
+            deltaX = -1;
+        } else if(moveRight && !moveLeft) {
+            deltaX = 1;
+        }
+        
+        if (deltaX != 0 || deltaY != 0) {
+            movePlayer(deltaX, deltaY);
+        }       
+    }
 
-	private void initGame() {
-    	int playerX = modelP.getPlayerPosX();
-    	int playerY = modelP.getPlayerPosY();
-    	
+    private void initGame() {
+        int playerX = modelP.getPlayerPosX();
+        int playerY = modelP.getPlayerPosY();
+        
         view.updateCoordinates(modelP.getPlayerPosX(), modelP.getPlayerPosY());
         view.updateXP(modelP.getCurrentXp());
         view.setDialogActive(isDialogActive);
         
         javax.swing.SwingUtilities.invokeLater(() -> {
-        	gamePanel.setPlayerTilePosition(playerX, playerY);
+            gamePanel.setPlayerTilePosition(playerX, playerY);
         });
     }
 
+    private NPCModel getNearbyNPC() {
+        int px = modelP.getPlayerPosX();
+        int py = modelP.getPlayerPosY();
+
+        for (NPCModel npc : NPCRepository.getNpcList()) {
+            int diffX = Math.abs(px - npc.getPositionX());
+            int diffY = Math.abs(py - npc.getPositionY());
+
+            if (diffX <= 1 && diffY <= 1) {
+                return npc; 
+            }
+        }
+        return null; 
+    }
+
     private void setupControllerInput() {
-    	
-    	// W = Nach oben (Y wird kleiner)
+        
         view.addKeyBinding(KeyStroke.getKeyStroke("pressed W"), "moveUpPressed", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-            	moveUp = true;
-            	gamePanel.updatePlayerDirection("W");
+                moveUp = true;
+                gamePanel.updatePlayerDirection("W");
             }
         });
         
         view.addKeyBinding(KeyStroke.getKeyStroke("released W"), "moveUpReleased", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-            	moveUp = false;
+                moveUp = false;
             }
         });
 
-        // S = Nach unten (Y wird größer)
         view.addKeyBinding(KeyStroke.getKeyStroke("pressed S"), "moveDownPressed", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-            	moveDown = true;
-            	gamePanel.updatePlayerDirection("S");
+                moveDown = true;
+                gamePanel.updatePlayerDirection("S");
             }
         });
         
         view.addKeyBinding(KeyStroke.getKeyStroke("released S"), "moveDownReleased", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-            	moveDown = false;
+                moveDown = false;
             }
         });
 
-        // A = Nach links (X wird kleiner)
         view.addKeyBinding(KeyStroke.getKeyStroke("pressed A"), "moveLeftPressed", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-            	moveLeft = true;
-            	gamePanel.updatePlayerDirection("A");
+                moveLeft = true;
+                gamePanel.updatePlayerDirection("A");
             }
         });
         
         view.addKeyBinding(KeyStroke.getKeyStroke("released A"), "moveLeftReleased", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-            	moveLeft = false;
+                moveLeft = false;
             }
         });
 
-        // D = Nach rechts (X wird größer)
         view.addKeyBinding(KeyStroke.getKeyStroke("pressed D"), "moveRightPressed", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-            	moveRight = true;
-            	gamePanel.updatePlayerDirection("D");
+                moveRight = true;
+                gamePanel.updatePlayerDirection("D");
             }
         });
         
         view.addKeyBinding(KeyStroke.getKeyStroke("released D"), "moveRightReleased", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-            	moveRight = false;
+                moveRight = false;
             }
         });
         
-        // Taste "E" für den Dialog
+        // Taste "E" für den Dialog (Dynamisch basierend auf Nähe)
         view.addKeyBinding(KeyStroke.getKeyStroke("E"), "toggleDialog", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                isDialogActive = !isDialogActive; 
-                view.setDialogActive(isDialogActive);  
-                System.out.println("Dialog-Status: " + isDialogActive);
+                if (isPauseActive || isInventoryActive || isShopActive) return;
+
+                if (!isDialogActive) {
+                    NPCModel nearNpc = getNearbyNPC();
+                    
+                    if (nearNpc != null) {
+                        isDialogActive = true; 
+                        
+                        // Blickrichtung bestimmen
+                        int px = modelP.getPlayerPosX();
+                        int py = modelP.getPlayerPosY();
+                        int nx = nearNpc.getPositionX();
+                        int ny = nearNpc.getPositionY();
+                        
+                        String turnDirection = "Down"; // Standard
+                        
+                        if (px < nx) {
+                            turnDirection = "Left";
+                        } else if (px > nx) {
+                            turnDirection = "Right";
+                        } else if (py < ny) {
+                            turnDirection = "Up";
+                        } else if (py > ny) {
+                            turnDirection = "Down";
+                        }
+                        
+                        // NPC drehen
+                        gamePanel.turnNpc(nearNpc, turnDirection);
+                        
+                        // 1. Text und NPC-Daten aus dem Repository holen
+                        String npcName = nearNpc.getName();
+                        String dialogueText = nearNpc.getDialog();
+                        
+                        // 2. Passenden Bildpfad für das NPC-Porträt/Sprite ermitteln (z.B. passend zum Ordner)
+                        String folderName = (npcName.equalsIgnoreCase("Schmied") || npcName.equalsIgnoreCase("Blacksmith")) ? "Blacksmith" : npcName;
+                        String spritePath = "/sprites_gifs/npc/" + folderName + "/" + turnDirection + "/idle.png";
+                        
+                        // 3. An die GameView (bzw. deine Dialogbox) übergeben
+                        view.showNpcDialog(npcName, dialogueText, spritePath);
+                        view.setDialogActive(true);  
+                    }
+                } else {
+                    isDialogActive = false;
+                    view.hideNpcDialog(); // Methode zum Schließen der Box in der View
+                    view.setDialogActive(false);
+                }
             }
         });
         
-        // Taste "I" für das Inventar
         view.addKeyBinding(KeyStroke.getKeyStroke("I"), "toggleInventory", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -199,27 +249,21 @@ public class GameController {
                 if (isInventoryActive) {
                     inventoryView.toFront();
                 }
-                
-                System.out.println("Inventar-Status: " + isInventoryActive);
             }
         });
-        // Taste "B" für den Shop
+
         view.addKeyBinding(KeyStroke.getKeyStroke("B"), "toggleShop", new AbstractAction() {
-        	@Override
-        	public void actionPerformed(ActionEvent e) {
-        		isShopActive = !isShopActive;                
-        		
-        		shopView.setVisible(isShopActive);
-        		if (isShopActive) {
-        			shopView.toFront();
-        		}
-        		
-        		System.out.println("Inventar-Status: " + isShopActive);
-        	}
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                isShopActive = !isShopActive;                
+                
+                shopView.setVisible(isShopActive);
+                if (isShopActive) {
+                    shopView.toFront();
+                }
+            }
         });
         
-        // pause menu
-     // pause menu
         view.addKeyBinding(KeyStroke.getKeyStroke("ESCAPE"), "togglePauseMenu", new AbstractAction() {
              @Override
              public void actionPerformed(ActionEvent e) {
@@ -232,22 +276,18 @@ public class GameController {
              }
         });
     }
-    
 
     private void initPauseMenu() {
-        // "false" statt "true", damit es das Hauptfenster nicht blockiert
         pauseDialog = new JDialog(view, "PAUSE", false);
         pauseDialog.setSize(500, 850);
         pauseDialog.setLocationRelativeTo(view);
         pauseDialog.setUndecorated(true);
-        pauseDialog.setFocusableWindowState(false); // <-- Verhindert den Fokus-Klau!
+        pauseDialog.setFocusableWindowState(false); 
 
-        // background
         JPanel bgPanel = new JPanel();
         bgPanel.setBorder(BorderFactory.createLineBorder(Color.RED, 4));
         pauseDialog.setContentPane(bgPanel);
 
-        // pause menu components
         JPanel contentPnl = new JPanel();
         contentPnl.setOpaque(false);
         contentPnl.setBorder(BorderFactory.createEmptyBorder(20, 30, 20, 30));
@@ -258,65 +298,50 @@ public class GameController {
 
         JButton resumeBtn = new JButton("Fortsetzen");
         AnimationController.beautifyButton(resumeBtn);
-        resumeBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                SoundController.playBtnSound();
-                isPauseActive = false; // Status updaten
-                pauseDialog.setVisible(false); // Verstecken statt dispose()
-            }
+        resumeBtn.addActionListener(e -> {
+            SoundController.playBtnSound();
+            isPauseActive = false; 
+            pauseDialog.setVisible(false); 
         });
 
         JButton saveBtn = new JButton("Speichern");
         AnimationController.beautifyButton(saveBtn);
-        saveBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                SoundController.playBtnSound();
-                isPauseActive = false;
-                pauseDialog.setVisible(false);
-                
-                javax.swing.SwingUtilities.invokeLater(() -> {
-                    SaveGameView saveView = new SaveGameView(modelG);
-                    saveView.setVisible(true);
-                    saveView.toFront();
-                    saveView.requestFocus();
-                });
-            }
+        saveBtn.addActionListener(e -> {
+            SoundController.playBtnSound();
+            isPauseActive = false;
+            pauseDialog.setVisible(false);
+            
+            javax.swing.SwingUtilities.invokeLater(() -> {
+                SaveGameView saveView = new SaveGameView(modelG);
+                saveView.setVisible(true);
+                saveView.toFront();
+                saveView.requestFocus();
+            });
         });
 
         JButton settingsBtn = new JButton("Einstellungen");
         AnimationController.beautifyButton(settingsBtn);
-        settingsBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                SoundController.playBtnSound();
-                isPauseActive = false;
-                pauseDialog.setVisible(false);
-                new SettingsView();
-            }
+        settingsBtn.addActionListener(e -> {
+            SoundController.playBtnSound();
+            isPauseActive = false;
+            pauseDialog.setVisible(false);
+            new SettingsView();
         });
 
         JButton returnBtn = new JButton("Hauptmenü");
         AnimationController.beautifyButton(returnBtn);
-        returnBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                SoundController.playBtnSound();
-                pauseDialog.setVisible(false);
-                new MenuView();
-                view.dispose();						
-            }
+        returnBtn.addActionListener(e -> {
+            SoundController.playBtnSound();
+            pauseDialog.setVisible(false);
+            new MenuView();
+            view.dispose();                        
         });
 
         JButton exitBtn = new JButton("Spiel Beenden");
         AnimationController.beautifyButton(exitBtn);
-        exitBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                SoundController.playBtnSound();
-                System.exit(0);
-            }
+        exitBtn.addActionListener(e -> {
+            SoundController.playBtnSound();
+            System.exit(0);
         });
 
         JLabel titleLbl = new JLabel("PAUSE");
@@ -334,12 +359,9 @@ public class GameController {
         contentPnl.add(menuPnl, BorderLayout.CENTER);
 
         bgPanel.add(contentPnl, BorderLayout.CENTER);
-        
     }
     
-    
     private void movePlayer(int deltaX, int deltaY) {
-    	
         int newX = modelP.getPlayerPosX() + deltaX;
         int newY = modelP.getPlayerPosY() + deltaY;
         
@@ -349,5 +371,4 @@ public class GameController {
         gamePanel.setPlayerTilePosition(newX, newY);
         view.updateCoordinates(newX, newY);
     }
-    
 }
