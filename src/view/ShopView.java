@@ -39,7 +39,7 @@ public class ShopView extends JFrame {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setTitle("Shop");
 		setUndecorated(true);
-
+		setFocusableWindowState(false);
 		getContentPane().setBackground(BG_COLOR);
 		setLayout(new BorderLayout());
 
