@@ -26,6 +26,7 @@ public class InventoryView extends JFrame {
 	private static final int ICON_SIZE = 64;
 	private JButton[][] slots = new JButton[ROWS][COLS];
 	private ItemRepository itemRepository = new ItemRepository();
+	private Runnable onCloseListener;
 
 	public InventoryView() {
 		this(null);
@@ -37,10 +38,9 @@ public class InventoryView extends JFrame {
 		setSize(800, 400);
 		setTitle("Inventar");
 		setUndecorated(true);
-		
-		setFocusableWindowState(false); //Damit die gleiche Taste das Fenster wieder schließt
-		
+		setFocusableWindowState(false); // Damit die gleiche Taste das Fenster wieder schließt
 		setBackground(new Color(0, 0, 0, 0));
+
 		getContentPane().setBackground(new Color(0, 0, 0, 0));
 
 		if (parent != null) {
@@ -72,6 +72,17 @@ public class InventoryView extends JFrame {
 		setVisible(true);
 	}
 
+	public void setOnCloseListener(Runnable listener) {
+		this.onCloseListener = listener;
+	}
+
+	private void closeInventory() {
+		setVisible(false);
+		if (onCloseListener != null) {
+			onCloseListener.run();
+		}
+	}
+
 	private JPanel createCloseButtonPanel() {
 
 		JPanel closePanel = new JPanel();
@@ -82,7 +93,7 @@ public class InventoryView extends JFrame {
 		AnimationController.beautifyButton(closeButton);
 		closeButton.setFont(AnimationController.loadDungeonFont(28f));
 		closeButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		closeButton.addActionListener(e -> setVisible(false));
+		closeButton.addActionListener(e -> closeInventory());
 
 		closePanel.add(closeButton);
 
@@ -158,8 +169,8 @@ public class InventoryView extends JFrame {
 					} else {
 						System.out.println("Leerer Slot");
 					}
-					setVisible(false);
-					});
+					closeInventory();
+				});
 
 				slots[row][col] = slot;
 				panel.add(slot);
@@ -184,5 +195,10 @@ public class InventoryView extends JFrame {
 		ImageIcon rawIcon = new ImageIcon(url);
 		Image scaledImage = rawIcon.getImage().getScaledInstance(ICON_SIZE, ICON_SIZE, Image.SCALE_SMOOTH);
 		return new ImageIcon(scaledImage);
+	}
+
+	public void setOnCloseListener(Object object) {
+		// TODO Automatisch generierter Methodenstub
+
 	}
 }
