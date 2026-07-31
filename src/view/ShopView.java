@@ -29,6 +29,7 @@ public class ShopView extends JFrame {
 	private static final Color TEXT_COLOR = new Color(189, 2, 0);
 	private static final Color HOVER_COLOR = new Color(237, 158, 12);
 	private static final Color VALUE_COLOR = new Color(255, 215, 0);
+	private Runnable onCloseListener;
 
 	public ShopView() {
 		this(null);
@@ -69,7 +70,7 @@ public class ShopView extends JFrame {
 		AnimationController.beautifyButton(closeButton);
 		closeButton.setFont(AnimationController.loadDungeonFont(36f));
 		closeButton.setFocusPainted(false);
-		closeButton.addActionListener(e -> dispose());
+		closeButton.addActionListener(e -> closeShop());
 
 		JPanel bottomPanel = new JPanel();
 		bottomPanel.setBackground(BG_COLOR);
@@ -81,6 +82,17 @@ public class ShopView extends JFrame {
 		positionNextToParent(parent);
 
 		setVisible(true);
+	}
+
+	public void setOnCloseListener(Runnable listener) {
+		this.onCloseListener = listener;
+	}
+
+	private void closeShop() {
+		setVisible(false);
+		if (onCloseListener != null) {
+			onCloseListener.run();
+		}
 	}
 
 	private void positionNextToParent(JFrame parent) {
@@ -219,7 +231,7 @@ public class ShopView extends JFrame {
 				System.out.println("Beschreibung: " + item.getDescription());
 				System.out.println("Wert: " + item.getValue());
 				System.out.println("Benötigtes Level: " + item.getRarityLvl());
-				dispose();
+				closeShop();
 			}
 		});
 
